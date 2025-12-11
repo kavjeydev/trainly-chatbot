@@ -146,7 +146,9 @@ export default function AdminDashboard() {
 
   // Config generator modal state
   const [showConfigModal, setShowConfigModal] = useState(false);
-  const [configType, setConfigType] = useState<"branding" | "content" | "both">("both");
+  const [configType, setConfigType] = useState<"branding" | "content" | "both">(
+    "both",
+  );
   const [copiedConfig, setCopiedConfig] = useState<string | null>(null);
 
   const router = useRouter();
@@ -189,7 +191,7 @@ export const branding = {
 
   /** Suggested questions shown to users */
   suggestedQuestions: [
-${s.suggestedQuestions.map(q => `    '${escapeString(q)}',`).join('\n')}
+${s.suggestedQuestions.map((q) => `    '${escapeString(q)}',`).join("\n")}
   ],
 
   /** Placeholder text in the input field */
@@ -241,11 +243,15 @@ ${s.suggestedQuestions.map(q => `    '${escapeString(q)}',`).join('\n')}
   // ============================================
 
   features: [
-${s.features.map(f => `    {
+${s.features
+  .map(
+    (f) => `    {
       title: '${escapeString(f.title)}',
       description: '${escapeString(f.description)}',
       icon: '${f.icon}',
-    },`).join('\n')}
+    },`,
+  )
+  .join("\n")}
   ],
 } as const;
 
@@ -289,11 +295,15 @@ export const content = {
   showHowItWorks: ${c.showHowItWorks},
   howItWorksHeading: '${escapeString(c.howItWorksHeading)}',
   howItWorksSteps: [
-${c.howItWorksSteps.map(step => `    {
+${c.howItWorksSteps
+  .map(
+    (step) => `    {
       step: '${escapeString(step.step)}',
       title: '${escapeString(step.title)}',
       description: '${escapeString(step.description)}',
-    },`).join('\n')}
+    },`,
+  )
+  .join("\n")}
   ],
 
   // ============================================
@@ -303,7 +313,7 @@ ${c.howItWorksSteps.map(step => `    {
   showBenefits: ${c.showBenefits},
   benefitsHeading: '${escapeString(c.benefitsHeading)}',
   benefits: [
-${c.benefits.map(b => `    '${escapeString(b)}',`).join('\n')}
+${c.benefits.map((b) => `    '${escapeString(b)}',`).join("\n")}
   ],
 
   // ============================================
@@ -331,14 +341,15 @@ export type Content = typeof content;
   // Helper to escape strings for TypeScript
   const escapeString = (str: string): string => {
     return str
-      .replace(/\\/g, '\\\\')
+      .replace(/\\/g, "\\\\")
       .replace(/'/g, "\\'")
-      .replace(/\n/g, '\\n');
+      .replace(/\n/g, "\\n");
   };
 
   // Copy config to clipboard
   const copyConfig = async (type: "branding" | "content") => {
-    const config = type === "branding" ? generateBrandingConfig() : generateContentConfig();
+    const config =
+      type === "branding" ? generateBrandingConfig() : generateContentConfig();
     await navigator.clipboard.writeText(config);
     setCopiedConfig(type);
     setTimeout(() => setCopiedConfig(null), 2000);
@@ -346,7 +357,8 @@ export type Content = typeof content;
 
   // Download config file
   const downloadConfig = (type: "branding" | "content") => {
-    const config = type === "branding" ? generateBrandingConfig() : generateContentConfig();
+    const config =
+      type === "branding" ? generateBrandingConfig() : generateContentConfig();
     const filename = type === "branding" ? "branding.ts" : "content.ts";
     const blob = new Blob([config], { type: "text/typescript" });
     const url = URL.createObjectURL(blob);
@@ -702,10 +714,10 @@ export type Content = typeof content;
       <div className="max-w-5xl mx-auto px-6 py-6 space-y-6">
         {/* Branding Tab */}
         {activeTab === "branding" && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
               <div>
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   <span>🎨</span>
                   Branding & Identity
                 </h2>
@@ -730,7 +742,7 @@ export type Content = typeof content;
                     strokeWidth={2}
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
-              </svg>
+                </svg>
                 {isLoadingBranding ? "Loading…" : "Reload"}
               </button>
             </div>
@@ -743,12 +755,26 @@ export type Content = typeof content;
 
             {/* Info banner about config generation */}
             <div className="mb-4 text-sm text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-xl px-4 py-3 flex items-start gap-2">
-              <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-5 h-5 flex-shrink-0 mt-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <div>
-                <strong>How it works:</strong> Edit your settings below, then click &quot;Generate Config&quot; to get a config file.
-                Replace <code className="bg-white/10 px-1 rounded">src/config/branding.ts</code> in your repo and redeploy.
+                <strong>How it works:</strong> Edit your settings below, then
+                click &quot;Generate Config&quot; to get a config file. Replace{" "}
+                <code className="bg-white/10 px-1 rounded">
+                  src/config/branding.ts
+                </code>{" "}
+                in your repo and redeploy.
               </div>
             </div>
 
@@ -1274,8 +1300,18 @@ export type Content = typeof content;
                 }}
                 className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 transition-colors flex items-center justify-center gap-2"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
                 </svg>
                 Generate Config
               </button>
@@ -1291,7 +1327,7 @@ export type Content = typeof content;
                 <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   <span>📝</span>
                   Landing Page Content
-            </h2>
+                </h2>
                 <p className="text-sm text-gray-400 mt-1">
                   Edit the text and sections on your landing page
                 </p>
@@ -1326,12 +1362,26 @@ export type Content = typeof content;
 
             {/* Info banner about config generation */}
             <div className="mb-4 text-sm text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-xl px-4 py-3 flex items-start gap-2">
-              <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-5 h-5 flex-shrink-0 mt-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <div>
-                <strong>How it works:</strong> Edit your settings below, then click &quot;Generate Config&quot; to get a config file.
-                Replace <code className="bg-white/10 px-1 rounded">src/config/content.ts</code> in your repo and redeploy.
+                <strong>How it works:</strong> Edit your settings below, then
+                click &quot;Generate Config&quot; to get a config file. Replace{" "}
+                <code className="bg-white/10 px-1 rounded">
+                  src/config/content.ts
+                </code>{" "}
+                in your repo and redeploy.
               </div>
             </div>
 
@@ -1588,8 +1638,18 @@ export type Content = typeof content;
                 }}
                 className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 transition-colors flex items-center justify-center gap-2"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
                 </svg>
                 Generate Config
               </button>
@@ -1610,11 +1670,11 @@ export type Content = typeof content;
                   Configure how your chatbot responds
                 </p>
               </div>
-            <button
-              onClick={loadSettings}
-              disabled={isLoadingSettings || isSavingSettings}
-              className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
-            >
+              <button
+                onClick={loadSettings}
+                disabled={isLoadingSettings || isSavingSettings}
+                className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
+              >
                 <svg
                   className={`w-4 h-4 ${isLoadingSettings ? "animate-spin" : ""}`}
                   fill="none"
@@ -1627,84 +1687,84 @@ export type Content = typeof content;
                     strokeWidth={2}
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
-              </svg>
+                </svg>
                 {isLoadingSettings ? "Loading…" : "Load Current"}
-            </button>
-          </div>
-
-          {settingsError && (
-            <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
-              {settingsError}
+              </button>
             </div>
-          )}
 
-          {settingsSuccess && (
-            <div className="mb-4 text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3">
-              Settings saved successfully!
-            </div>
-          )}
+            {settingsError && (
+              <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+                {settingsError}
+              </div>
+            )}
 
-          <form className="space-y-5" onSubmit={handleSaveSettings}>
-            <div className="space-y-2">
+            {settingsSuccess && (
+              <div className="mb-4 text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3">
+                Settings saved successfully!
+              </div>
+            )}
+
+            <form className="space-y-5" onSubmit={handleSaveSettings}>
+              <div className="space-y-2">
                 <label className="text-sm text-gray-300 font-medium">
                   System Prompt
                 </label>
-              <textarea
-                value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                rows={4}
-                className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors resize-none"
-                placeholder="Set a system prompt to define the assistant's behavior..."
-                disabled={isSavingSettings}
-              />
-            </div>
+                <textarea
+                  value={customPrompt}
+                  onChange={(e) => setCustomPrompt(e.target.value)}
+                  rows={4}
+                  className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors resize-none"
+                  placeholder="Set a system prompt to define the assistant's behavior..."
+                  disabled={isSavingSettings}
+                />
+              </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
                   <label className="text-sm text-gray-300 font-medium">
                     Temperature
                   </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="2"
-                  value={temperature}
-                  onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                  className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
-                  disabled={isSavingSettings}
-                />
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="2"
+                    value={temperature}
+                    onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                    className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
+                    disabled={isSavingSettings}
+                  />
                   <p className="text-xs text-gray-500">
                     0 = focused, 2 = creative
                   </p>
-              </div>
-              <div className="space-y-2">
+                </div>
+                <div className="space-y-2">
                   <label className="text-sm text-gray-300 font-medium">
                     Max Tokens
                   </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="4096"
-                  value={maxTokens}
+                  <input
+                    type="number"
+                    min="1"
+                    max="4096"
+                    value={maxTokens}
                     onChange={(e) =>
                       setMaxTokens(parseInt(e.target.value, 10) || 0)
                     }
-                  className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
-                  disabled={isSavingSettings}
-                />
-                <p className="text-xs text-gray-500">Response length limit</p>
-              </div>
-              <div className="space-y-2">
+                    className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
+                    disabled={isSavingSettings}
+                  />
+                  <p className="text-xs text-gray-500">Response length limit</p>
+                </div>
+                <div className="space-y-2">
                   <label className="text-sm text-gray-300 font-medium">
                     Model
                   </label>
-                <select
-                  value={selectedModel}
-                  onChange={(e) => setSelectedModel(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none transition-colors appearance-none cursor-pointer"
-                  disabled={isSavingSettings}
-                >
+                  <select
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none transition-colors appearance-none cursor-pointer"
+                    disabled={isSavingSettings}
+                  >
                     <option value="gpt-4o-mini" className="bg-gray-900">
                       GPT-4o Mini
                     </option>
@@ -1717,18 +1777,18 @@ export type Content = typeof content;
                     <option value="gpt-3.5-turbo" className="bg-gray-900">
                       GPT-3.5 Turbo
                     </option>
-                </select>
-                <p className="text-xs text-gray-500">OpenAI model to use</p>
+                  </select>
+                  <p className="text-xs text-gray-500">OpenAI model to use</p>
+                </div>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={isSavingSettings}
-              className="px-5 py-2.5 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 disabled:opacity-60 transition-colors flex items-center gap-2"
-            >
-              {isSavingSettings ? (
-                <>
+              <button
+                type="submit"
+                disabled={isSavingSettings}
+                className="px-5 py-2.5 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 disabled:opacity-60 transition-colors flex items-center gap-2"
+              >
+                {isSavingSettings ? (
+                  <>
                     <svg
                       className="w-4 h-4 animate-spin"
                       fill="none"
@@ -1747,11 +1807,11 @@ export type Content = typeof content;
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
-                  </svg>
-                  Saving…
-                </>
-              ) : (
-                <>
+                    </svg>
+                    Saving…
+                  </>
+                ) : (
+                  <>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -1764,33 +1824,33 @@ export type Content = typeof content;
                         strokeWidth={2}
                         d="M5 13l4 4L19 7"
                       />
-                  </svg>
-                  Save Settings
-                </>
-              )}
-            </button>
-          </form>
-        </div>
+                    </svg>
+                    Save Settings
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
         )}
 
         {/* Knowledge Base Tab */}
         {activeTab === "files" && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
               <div>
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   <span>📁</span>
-              Knowledge Base
-            </h2>
+                  Knowledge Base
+                </h2>
                 <p className="text-sm text-gray-400 mt-1">
                   Upload documents to train your chatbot
                 </p>
               </div>
-            <button
-              onClick={loadFiles}
-              disabled={isLoadingFiles}
-              className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
-            >
+              <button
+                onClick={loadFiles}
+                disabled={isLoadingFiles}
+                className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
+              >
                 <svg
                   className={`w-4 h-4 ${isLoadingFiles ? "animate-spin" : ""}`}
                   fill="none"
@@ -1803,39 +1863,39 @@ export type Content = typeof content;
                     strokeWidth={2}
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
-              </svg>
+                </svg>
                 {isLoadingFiles ? "Loading…" : "Refresh"}
-            </button>
-          </div>
+              </button>
+            </div>
 
-          {filesError && (
-            <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
-              {filesError}
+            {filesError && (
+              <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+                {filesError}
                 <button
                   onClick={() => setFilesError(null)}
                   className="ml-2 text-red-300 hover:text-red-200"
                 >
                   ✕
                 </button>
-            </div>
-          )}
+              </div>
+            )}
 
-          {/* File Upload Area */}
-          <div className="mb-4">
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept=".txt,.md,.json,.csv,.pdf,.docx"
-              onChange={handleFileUpload}
-              className="hidden"
-              id="context-file-upload"
-            />
-            <label
-              htmlFor="context-file-upload"
-              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-amber-500/50 hover:bg-white/5 transition-colors"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {/* File Upload Area */}
+            <div className="mb-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".txt,.md,.json,.csv,.pdf,.docx"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="context-file-upload"
+              />
+              <label
+                htmlFor="context-file-upload"
+                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-amber-500/50 hover:bg-white/5 transition-colors"
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
                     className="w-8 h-8 mb-3 text-gray-400"
                     fill="none"
@@ -1848,30 +1908,30 @@ export type Content = typeof content;
                       strokeWidth={2}
                       d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
-                </svg>
-                <p className="text-sm text-gray-400">Click to upload files</p>
+                  </svg>
+                  <p className="text-sm text-gray-400">Click to upload files</p>
                   <p className="text-xs text-gray-500 mt-1">
                     .txt, .md, .json, .csv, .pdf, .docx
                   </p>
-              </div>
-            </label>
-          </div>
+                </div>
+              </label>
+            </div>
 
-          {/* Upload Progress */}
-          {uploadingFiles.length > 0 && (
-            <div className="mb-4 space-y-2">
-              {uploadingFiles.map((file, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center justify-between px-4 py-2 rounded-lg ${
+            {/* Upload Progress */}
+            {uploadingFiles.length > 0 && (
+              <div className="mb-4 space-y-2">
+                {uploadingFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center justify-between px-4 py-2 rounded-lg ${
                       file.status === "uploading"
                         ? "bg-amber-500/10 border border-amber-500/30"
                         : file.status === "success"
                           ? "bg-green-500/10 border border-green-500/30"
                           : "bg-red-500/10 border border-red-500/30"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
                       {file.status === "uploading" && (
                         <svg
                           className="w-4 h-4 text-amber-400 animate-spin"
@@ -1891,8 +1951,8 @@ export type Content = typeof content;
                             fill="currentColor"
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
-                      </svg>
-                    )}
+                        </svg>
+                      )}
                       {file.status === "success" && (
                         <svg
                           className="w-4 h-4 text-green-400"
@@ -1906,8 +1966,8 @@ export type Content = typeof content;
                             strokeWidth={2}
                             d="M5 13l4 4L19 7"
                           />
-                      </svg>
-                    )}
+                        </svg>
+                      )}
                       {file.status === "error" && (
                         <svg
                           className="w-4 h-4 text-red-400"
@@ -1921,8 +1981,8 @@ export type Content = typeof content;
                             strokeWidth={2}
                             d="M6 18L18 6M6 6l12 12"
                           />
-                      </svg>
-                    )}
+                        </svg>
+                      )}
                       <span
                         className={`text-sm ${
                           file.status === "uploading"
@@ -1934,7 +1994,7 @@ export type Content = typeof content;
                       >
                         {file.name}
                       </span>
-                  </div>
+                    </div>
                     <span
                       className={`text-xs ${
                         file.status === "uploading"
@@ -1948,24 +2008,24 @@ export type Content = typeof content;
                         ? "Uploading..."
                         : file.message}
                     </span>
-                </div>
-              ))}
-            </div>
-          )}
+                  </div>
+                ))}
+              </div>
+            )}
 
-          {/* Uploaded Files List */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
+            {/* Uploaded Files List */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
                 <label className="text-sm text-gray-300 font-medium">
                   Uploaded Files
                 </label>
                 <span className="text-xs text-gray-500">
                   {files.length} file{files.length !== 1 ? "s" : ""}
                 </span>
-            </div>
+              </div>
 
-            {isLoadingFiles ? (
-              <div className="flex items-center justify-center py-8">
+              {isLoadingFiles ? (
+                <div className="flex items-center justify-center py-8">
                   <svg
                     className="w-6 h-6 text-amber-400 animate-spin"
                     fill="none"
@@ -1984,21 +2044,21 @@ export type Content = typeof content;
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
-                </svg>
-              </div>
-            ) : files.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 text-sm">
+                  </svg>
+                </div>
+              ) : files.length === 0 ? (
+                <div className="text-center py-8 text-gray-500 text-sm">
                   No files uploaded yet. Upload documents to expand the
                   chatbot&apos;s knowledge.
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {files.map((file) => (
-                  <div
-                    key={file.file_id}
-                    className="flex items-center justify-between px-4 py-3 bg-black/30 rounded-lg group hover:bg-black/40 transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {files.map((file) => (
+                    <div
+                      key={file.file_id}
+                      className="flex items-center justify-between px-4 py-3 bg-black/30 rounded-lg group hover:bg-black/40 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <svg
                           className="w-5 h-5 text-amber-400 flex-shrink-0"
                           fill="none"
@@ -2011,8 +2071,8 @@ export type Content = typeof content;
                             strokeWidth={2}
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                           />
-                      </svg>
-                      <div className="min-w-0 flex-1">
+                        </svg>
+                        <div className="min-w-0 flex-1">
                           <p className="text-sm text-gray-200 truncate">
                             {file.filename}
                           </p>
@@ -2020,14 +2080,14 @@ export type Content = typeof content;
                             {formatBytes(file.size_bytes)} • {file.chunk_count}{" "}
                             chunk{file.chunk_count !== 1 ? "s" : ""}
                           </p>
+                        </div>
                       </div>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteFile(file.file_id)}
-                      disabled={deletingFileId === file.file_id}
-                      className="text-gray-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50 flex-shrink-0 ml-2"
-                    >
-                      {deletingFileId === file.file_id ? (
+                      <button
+                        onClick={() => handleDeleteFile(file.file_id)}
+                        disabled={deletingFileId === file.file_id}
+                        className="text-gray-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50 flex-shrink-0 ml-2"
+                      >
+                        {deletingFileId === file.file_id ? (
                           <svg
                             className="w-4 h-4 animate-spin"
                             fill="none"
@@ -2046,8 +2106,8 @@ export type Content = typeof content;
                               fill="currentColor"
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
-                        </svg>
-                      ) : (
+                          </svg>
+                        ) : (
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -2060,40 +2120,40 @@ export type Content = typeof content;
                               strokeWidth={2}
                               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                             />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
         )}
 
         {/* Embed Code Tab */}
         {activeTab === "embed" && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
               <span>🔗</span>
-            Embed on Your Website
-          </h2>
+              Embed on Your Website
+            </h2>
 
-          <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm text-gray-400 mb-4">
               Add this code to your website to embed the chatbot. Place it
               before the closing{" "}
               <code className="text-amber-400">&lt;/body&gt;</code> tag.
-          </p>
+            </p>
 
-          <div className="relative">
-            <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono">
-              {getEmbedCode()}
-            </pre>
-            <button
-              onClick={copyEmbedCode}
-              className="absolute top-3 right-3 px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
-            >
-              {embedCopied ? (
+            <div className="relative">
+              <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono">
+                {getEmbedCode()}
+              </pre>
+              <button
+                onClick={copyEmbedCode}
+                className="absolute top-3 right-3 px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
+              >
+                {embedCopied ? (
                   <>
                     <svg
                       className="w-3.5 h-3.5"
@@ -2170,7 +2230,11 @@ export type Content = typeof content;
             <div className="flex items-center justify-between p-6 border-b border-white/10">
               <div>
                 <h2 className="text-xl font-bold text-white">
-                  {configType === "branding" ? "📦 branding.ts" : configType === "content" ? "📝 content.ts" : "📦 Config Files"}
+                  {configType === "branding"
+                    ? "📦 branding.ts"
+                    : configType === "content"
+                      ? "📝 content.ts"
+                      : "📦 Config Files"}
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
                   Copy or download this file and replace it in your repository
@@ -2180,8 +2244,18 @@ export type Content = typeof content;
                 onClick={() => setShowConfigModal(false)}
                 className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
-                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -2201,15 +2275,35 @@ export type Content = typeof content;
                       >
                         {copiedConfig === "branding" ? (
                           <>
-                            <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            <svg
+                              className="w-3.5 h-3.5 text-green-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
                             </svg>
                             Copied!
                           </>
                         ) : (
-                <>
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          <>
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
                             </svg>
                             Copy
                           </>
@@ -2219,8 +2313,18 @@ export type Content = typeof content;
                         onClick={() => downloadConfig("branding")}
                         className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-xs text-amber-400 transition-colors flex items-center gap-1"
                       >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                          />
                         </svg>
                         Download
                       </button>
@@ -2245,26 +2349,56 @@ export type Content = typeof content;
                       >
                         {copiedConfig === "content" ? (
                           <>
-                            <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                  Copy
-                </>
-              )}
-            </button>
+                            <svg
+                              className="w-3.5 h-3.5 text-green-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
+                            </svg>
+                            Copy
+                          </>
+                        )}
+                      </button>
                       <button
                         onClick={() => downloadConfig("content")}
                         className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-xs text-amber-400 transition-colors flex items-center gap-1"
                       >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                          />
                         </svg>
                         Download
                       </button>
@@ -2275,25 +2409,42 @@ export type Content = typeof content;
                   </pre>
                 </div>
               )}
-          </div>
+            </div>
 
             {/* Modal Footer */}
             <div className="p-6 border-t border-white/10 bg-white/5">
               <div className="flex items-start gap-3">
                 <div className="p-2 bg-amber-500/10 rounded-lg">
-                  <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-5 h-5 text-amber-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
-          </div>
+                </div>
                 <div className="text-sm text-gray-400">
                   <strong className="text-white">Next steps:</strong>
                   <ol className="mt-2 space-y-1 list-decimal list-inside">
                     <li>Download or copy the config file above</li>
-                    <li>Replace <code className="bg-white/10 px-1 rounded">src/config/{configType === "content" ? "content" : "branding"}.ts</code> in your repo</li>
+                    <li>
+                      Replace{" "}
+                      <code className="bg-white/10 px-1 rounded">
+                        src/config/
+                        {configType === "content" ? "content" : "branding"}.ts
+                      </code>{" "}
+                      in your repo
+                    </li>
                     <li>Commit and push to trigger a redeploy</li>
                   </ol>
-        </div>
-      </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
