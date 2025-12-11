@@ -37,7 +37,7 @@ export const branding = {
   /** Suggested questions shown to new users */
   suggestedQuestions: [
     'What can you do?',
-    'Tell me more',
+    'Tell me more'
   ],
 
   /** Placeholder text in the chat input */
@@ -51,7 +51,7 @@ export const branding = {
     {
       title: 'Lightning Fast',
       description: 'Get instant responses powered by advanced AI models with minimal latency.',
-      icon: 'bolt', // bolt, brain, puzzle
+      icon: 'bolt',
     },
     {
       title: 'Context Aware',
@@ -62,7 +62,7 @@ export const branding = {
       title: 'Easy Integration',
       description: 'Simple setup with your existing workflow. No complex configurations needed.',
       icon: 'puzzle',
-    },
+    }
   ],
 
   // ============================================
@@ -104,7 +104,7 @@ export const branding = {
   adminTitle: 'Admin Dashboard',
 
   /** Show "Powered by Trainly" badge (set to false to remove) */
-  showPoweredBy: true,
+  showPoweredBy: false,
 
 } as const;
 

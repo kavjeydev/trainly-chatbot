@@ -1,39 +1,99 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import ChatWidget from '@/components/ChatWidget';
-import { branding } from '@/config/branding';
-import { content } from '@/config/content';
+import { useState, useEffect } from "react";
+import ChatWidget from "@/components/ChatWidget";
+import { branding } from "@/config/branding";
+import { content } from "@/config/content";
 
 const featureIcons = {
   bolt: (
-    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M13 10V3L4 14h7v7l9-11h-7z"
+      />
     </svg>
   ),
   brain: (
-    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+      />
     </svg>
   ),
   puzzle: (
-    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+      />
     </svg>
   ),
   chat: (
-    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+      />
     </svg>
   ),
   shield: (
-    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+      />
     </svg>
   ),
   clock: (
-    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
     </svg>
   ),
 };
@@ -47,8 +107,8 @@ export default function Home() {
   }, []);
 
   // Split hero heading for styling (first part normal, second part highlighted)
-  const headingParts = content.heroHeading.includes(',')
-    ? content.heroHeading.split(',')
+  const headingParts = content.heroHeading.includes(",")
+    ? content.heroHeading.split(",")
     : [content.heroHeading];
 
   return (
@@ -64,10 +124,8 @@ export default function Home() {
             {headingParts[0]}
             {headingParts[1] && (
               <>
-                ,{' '}
-                <span className="text-amber-400">
-                  {headingParts[1].trim()}
-                </span>
+                ,{" "}
+                <span className="text-amber-400">{headingParts[1].trim()}</span>
               </>
             )}
           </h1>
@@ -87,12 +145,26 @@ export default function Home() {
             ) : (
               <>
                 <div className="flex items-center gap-3 text-blue-400">
-                  <span className="text-sm font-medium">{content.heroCtaText}</span>
-                  <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <span className="text-sm font-medium">
+                    {content.heroCtaText}
+                  </span>
+                  <svg
+                    className="w-5 h-5 animate-bounce"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
                 </div>
-                <p className="text-sm text-gray-500">Click the chat button in the bottom right corner</p>
+                <p className="text-sm text-gray-500">
+                  Click the chat button in the bottom right corner
+                </p>
               </>
             )}
           </div>
@@ -117,10 +189,15 @@ export default function Home() {
                 className="p-6 bg-white/5 border border-white/10 rounded-2xl hover:border-amber-500/30 transition-colors group"
               >
                 <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4 group-hover:bg-amber-500/20 transition-colors">
-                  {featureIcons[feature.icon as keyof typeof featureIcons] || featureIcons.bolt}
+                  {featureIcons[feature.icon as keyof typeof featureIcons] ||
+                    featureIcons.bolt}
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2 tracking-tighter">{feature.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+                <h3 className="text-lg font-semibold text-white mb-2 tracking-tighter">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
@@ -143,7 +220,9 @@ export default function Home() {
                     {step.step}
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
+                    <h3 className="text-xl font-semibold text-white mb-2">
+                      {step.title}
+                    </h3>
                     <p className="text-gray-400">{step.description}</p>
                   </div>
                 </div>
@@ -163,9 +242,22 @@ export default function Home() {
               </h2>
               <ul className="space-y-4">
                 {content.benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-center gap-3 text-gray-300">
-                    <svg className="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <li
+                    key={index}
+                    className="flex items-center gap-3 text-gray-300"
+                  >
+                    <svg
+                      className="w-5 h-5 text-amber-400 flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     {benefit}
                   </li>
@@ -203,16 +295,29 @@ export default function Home() {
             <div className="p-8 md:p-12 bg-amber-500/5 border border-amber-500/20 rounded-3xl">
               <div className="flex flex-col md:flex-row items-center gap-8">
                 <div className="w-20 h-20 rounded-2xl bg-amber-500 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-10 h-10 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  <svg
+                    className="w-10 h-10 text-black"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    />
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-3 tracking-tighter">Powered by Trainly</h2>
+                  <h2 className="text-2xl font-bold text-white mb-3 tracking-tighter">
+                    Powered by Trainly
+                  </h2>
                   <p className="text-gray-400 leading-relaxed">
-                    Our AI assistant is built on Trainly&apos;s advanced natural language processing technology,
-                    enabling intelligent, context-aware conversations that understand your needs and deliver
-                    accurate, helpful responses every time.
+                    Our AI assistant is built on Trainly&apos;s advanced natural
+                    language processing technology, enabling intelligent,
+                    context-aware conversations that understand your needs and
+                    deliver accurate, helpful responses every time.
                   </p>
                 </div>
               </div>

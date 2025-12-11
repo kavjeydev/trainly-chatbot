@@ -34,7 +34,7 @@ const iconOptions = ['bolt', 'brain', 'puzzle', 'chat', 'shield', 'clock'];
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('branding');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  
+
   // Chat settings state
   const [isLoadingSettings, setIsLoadingSettings] = useState(false);
   const [isSavingSettings, setIsSavingSettings] = useState(false);

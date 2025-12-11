@@ -19,6 +19,7 @@ Built with Next.js 15, Tailwind CSS, and powered by [Trainly AI](https://trainly
 ## 🛠 Setup Overview (No Coding Required)
 
 You'll:
+
 1. **Make a copy of the project** — Click "Use this template" → "Create repository"
 2. **Deploy it to the internet** — Click "Deploy to Vercel" (free tier is fine)
 3. **Edit your branding + content** — Use the admin dashboard or edit 2 simple config files
@@ -42,18 +43,19 @@ Click the button below (or in your new repo's README):
 
 Vercel will ask you to fill in these values:
 
-| Variable | What to Enter |
-|----------|---------------|
-| `TRAINLY_API_KEY` | Your Trainly API key (included with purchase) |
-| `TRAINLY_CHAT_ID` | Your Trainly Chat ID (included with purchase) |
-| `ADMIN_PASSWORD` | Choose a strong password for admin access |
-| `JWT_SECRET` | Run `openssl rand -base64 32` or use any 32+ character random string |
+| Variable          | What to Enter                                                        |
+| ----------------- | -------------------------------------------------------------------- |
+| `TRAINLY_API_KEY` | Your Trainly API key (included with purchase)                        |
+| `TRAINLY_CHAT_ID` | Your Trainly Chat ID (included with purchase)                        |
+| `ADMIN_PASSWORD`  | Choose a strong password for admin access                            |
+| `JWT_SECRET`      | Run `openssl rand -base64 32` or use any 32+ character random string |
 
 ### Step 3: Customize
 
 Once deployed, go to `your-site.vercel.app/admin` and log in with your admin password.
 
 **From the admin dashboard you can:**
+
 - 🎨 **Branding** — Change company name, colors, chatbot name
 - 📝 **Content** — Edit headings, descriptions, CTA buttons
 - 🤖 **AI Settings** — Adjust system prompt, temperature, model
@@ -67,29 +69,32 @@ Once deployed, go to `your-site.vercel.app/admin` and log in with your admin pas
 Everything your clients need to customize lives in **2 config files**:
 
 ### `src/config/branding.ts`
+
 ```typescript
 export const branding = {
-  companyName: 'YOUR AGENCY NAME',
-  chatbotName: 'YOUR BOT NAME',
-  tagline: 'Your catchy tagline here',
-  primaryColor: 'amber',  // amber, blue, green, purple, etc.
-  showPoweredBy: false,   // Hide "Powered by Trainly"
+  companyName: "YOUR AGENCY NAME",
+  chatbotName: "YOUR BOT NAME",
+  tagline: "Your catchy tagline here",
+  primaryColor: "amber", // amber, blue, green, purple, etc.
+  showPoweredBy: false, // Hide "Powered by Trainly"
   // ...more options
 };
 ```
 
 ### `src/config/content.ts`
+
 ```typescript
 export const content = {
-  heroHeading: 'We Build AI Chatbots for Local Businesses',
-  heroSubheading: 'Replace missed calls with instant, 24/7 AI assistants.',
-  heroCtaText: 'Book a Call',
-  heroCtaLink: 'https://calendly.com/your-link',
+  heroHeading: "We Build AI Chatbots for Local Businesses",
+  heroSubheading: "Replace missed calls with instant, 24/7 AI assistants.",
+  heroCtaText: "Book a Call",
+  heroCtaLink: "https://calendly.com/your-link",
   // ...more options
 };
 ```
 
 **You don't need to touch anything else:**
+
 - ❌ No `pages/` or `components/`
 - ❌ No `api/` routes
 - ❌ No `package.json`
@@ -104,6 +109,7 @@ Just edit content like you're filling out a form.
 ## 🧩 Using This for Multiple Clients
 
 For each new client:
+
 1. **Duplicate your GitHub repo** (or use "Use this template" again)
 2. **Change `branding.ts` + `content.ts`** to match the new client
 3. **Click "Deploy to Vercel"** again with new API keys
@@ -116,6 +122,7 @@ Client #3 → clientthree.vercel.app (or clientthree.com)
 ```
 
 Each client gets their own:
+
 - ✅ Deployment & domain
 - ✅ Branding & colors
 - ✅ Knowledge base (trained on THEIR documents)
@@ -125,34 +132,34 @@ Each client gets their own:
 
 ## 🎯 What You're Getting
 
-| Component | What It Is | Who It's For |
-|-----------|------------|--------------|
-| **Landing Page** (`/`) | A demo/showcase page | You (to demo the product) |
-| **Chat Widget** | The embeddable chatbot | Your clients' websites |
-| **Admin Panel** (`/admin`) | Visual config editor | You (to manage each client) |
+| Component                  | What It Is             | Who It's For                |
+| -------------------------- | ---------------------- | --------------------------- |
+| **Landing Page** (`/`)     | A demo/showcase page   | You (to demo the product)   |
+| **Chat Widget**            | The embeddable chatbot | Your clients' websites      |
+| **Admin Panel** (`/admin`) | Visual config editor   | You (to manage each client) |
 
 ### Admin Dashboard Features
 
-| Tab | What You Can Do |
-|-----|-----------------|
-| 🎨 **Branding** | Company name, colors, chat widget settings |
-| 📝 **Content** | Hero text, CTAs, sections, footer |
-| 🤖 **AI Settings** | System prompt, temperature, model selection |
-| 📁 **Knowledge Base** | Upload PDFs, docs, CSVs to train the bot |
-| 🔗 **Embed** | Copy-paste code for client websites |
+| Tab                   | What You Can Do                             |
+| --------------------- | ------------------------------------------- |
+| 🎨 **Branding**       | Company name, colors, chat widget settings  |
+| 📝 **Content**        | Hero text, CTAs, sections, footer           |
+| 🤖 **AI Settings**    | System prompt, temperature, model selection |
+| 📁 **Knowledge Base** | Upload PDFs, docs, CSVs to train the bot    |
+| 🔗 **Embed**          | Copy-paste code for client websites         |
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|---------|-------------|
-| 🎨 **White-Label Ready** | Remove all Trainly branding |
-| 💬 **Beautiful Chat Widget** | Modern, responsive — embed anywhere |
-| 📦 **One-Line Embed** | `<script src="...">` — works everywhere |
-| 🔐 **Secure Admin Panel** | Visual editor for all settings |
-| 📄 **Knowledge Base** | Upload PDFs, docs, CSVs to train the bot |
-| 🚀 **One-Click Deploy** | No terminal required |
+| Feature                      | Description                              |
+| ---------------------------- | ---------------------------------------- |
+| 🎨 **White-Label Ready**     | Remove all Trainly branding              |
+| 💬 **Beautiful Chat Widget** | Modern, responsive — embed anywhere      |
+| 📦 **One-Line Embed**        | `<script src="...">` — works everywhere  |
+| 🔐 **Secure Admin Panel**    | Visual editor for all settings           |
+| 📄 **Knowledge Base**        | Upload PDFs, docs, CSVs to train the bot |
+| 🚀 **One-Click Deploy**      | No terminal required                     |
 
 ---
 
@@ -175,6 +182,7 @@ You give them one line of code:
 They paste it before `</body>` on their website. Done!
 
 ### Works On:
+
 - ✅ WordPress
 - ✅ Shopify
 - ✅ Webflow
@@ -223,12 +231,12 @@ All AI requests are made server-side through Next.js API routes.
 
 ## 🌍 Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `TRAINLY_API_KEY` | ✅ | Trainly API key (included with purchase) |
-| `TRAINLY_CHAT_ID` | ✅ | Trainly Chat ID (included with purchase) |
-| `ADMIN_PASSWORD` | ✅ | Admin panel password |
-| `JWT_SECRET` | ✅ | At least 32 characters |
+| Variable          | Required | Description                              |
+| ----------------- | -------- | ---------------------------------------- |
+| `TRAINLY_API_KEY` | ✅       | Trainly API key (included with purchase) |
+| `TRAINLY_CHAT_ID` | ✅       | Trainly Chat ID (included with purchase) |
+| `ADMIN_PASSWORD`  | ✅       | Admin panel password                     |
+| `JWT_SECRET`      | ✅       | At least 32 characters                   |
 
 ---
 
@@ -236,28 +244,31 @@ All AI requests are made server-side through Next.js API routes.
 
 ### Suggested Pricing
 
-| Service | Price |
-|---------|-------|
-| Setup Fee | $500 - $2,000 |
-| Monthly Retainer | $200 - $500/month |
-| Document Training | $100 - $300/hour |
-| Custom Features | $150/hour |
+| Service           | Price             |
+| ----------------- | ----------------- |
+| Setup Fee         | $500 - $2,000     |
+| Monthly Retainer  | $200 - $500/month |
+| Document Training | $100 - $300/hour  |
+| Custom Features   | $150/hour         |
 
 ---
 
 ## 🛠️ Troubleshooting
 
 ### Chat not responding
+
 1. Check API keys in Vercel environment variables
 2. Verify Trainly dashboard shows the chatbot as active
 3. Check browser console for errors
 
 ### Admin login not working
+
 1. Ensure `JWT_SECRET` is 32+ characters
 2. Clear cookies and retry
 3. Check `ADMIN_PASSWORD` matches
 
 ### Widget not appearing on client's site
+
 1. Check embed code has correct domain
 2. Verify `/widget.js` is accessible
 3. Check for CSP restrictions on client's site
@@ -267,15 +278,19 @@ All AI requests are made server-side through Next.js API routes.
 ## ❓ FAQ
 
 **Q: Do I need to sign up for Trainly?**
+
 > Not for your first client — API keys are included! For additional clients, sign up at [trainlyai.com](https://trainlyai.com).
 
 **Q: Can I remove "Powered by Trainly"?**
+
 > Yes, uncheck it in the admin dashboard or set `showPoweredBy: false` in `branding.ts`.
 
 **Q: How do I train the bot on client documents?**
+
 > Go to `/admin` → Knowledge Base → Upload files (PDF, TXT, CSV, etc.)
 
 **Q: Is this really no-code?**
+
 > Yes! You can customize everything through the admin dashboard. The config files are there as a backup option.
 
 ---
@@ -298,6 +313,7 @@ npm run start    # Production server
 You may use this template for **unlimited client projects**.
 
 **You may NOT:**
+
 - Resell the source code as your own template
 - Redistribute the template on marketplaces
 - Claim the template as your original work

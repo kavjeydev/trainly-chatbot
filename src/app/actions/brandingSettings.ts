@@ -1,7 +1,7 @@
-'use server';
+"use server";
 
-import { promises as fs } from 'fs';
-import path from 'path';
+import { promises as fs } from "fs";
+import path from "path";
 
 export type BrandingSettings = {
   companyName: string;
@@ -53,28 +53,28 @@ export type ContentSettings = {
   showFooterLinks: boolean;
 };
 
-const BRANDING_FILE_PATH = path.join(process.cwd(), 'src/config/branding.ts');
-const CONTENT_FILE_PATH = path.join(process.cwd(), 'src/config/content.ts');
+const BRANDING_FILE_PATH = path.join(process.cwd(), "src/config/branding.ts");
+const CONTENT_FILE_PATH = path.join(process.cwd(), "src/config/content.ts");
 
 function parseBrandingFile(content: string): BrandingSettings {
   // Extract values from the TypeScript file
-  const extract = (key: string, defaultValue: string = ''): string => {
-    const regex = new RegExp(`${key}:\\s*['"\`]([^'"\`]*)['"\`]`, 'm');
+  const extract = (key: string, defaultValue: string = ""): string => {
+    const regex = new RegExp(`${key}:\\s*['"\`]([^'"\`]*)['"\`]`, "m");
     const match = content.match(regex);
     return match ? match[1] : defaultValue;
   };
 
   const extractBool = (key: string, defaultValue: boolean = false): boolean => {
-    const regex = new RegExp(`${key}:\\s*(true|false)`, 'm');
+    const regex = new RegExp(`${key}:\\s*(true|false)`, "m");
     const match = content.match(regex);
-    return match ? match[1] === 'true' : defaultValue;
+    return match ? match[1] === "true" : defaultValue;
   };
 
   const extractArray = (key: string): string[] => {
-    const regex = new RegExp(`${key}:\\s*\\[([^\\]]*?)\\]`, 'ms');
+    const regex = new RegExp(`${key}:\\s*\\[([^\\]]*?)\\]`, "ms");
     const match = content.match(regex);
     if (!match) return [];
-    
+
     const arrayContent = match[1];
     const items: string[] = [];
     const itemRegex = /['"`]([^'"`]*)['"`]/g;
@@ -86,13 +86,20 @@ function parseBrandingFile(content: string): BrandingSettings {
   };
 
   // Extract features array
-  const extractFeatures = (): { title: string; description: string; icon: string }[] => {
-    const featuresMatch = content.match(/features:\s*\[([\s\S]*?)\],\s*\n\s*\/\//m);
+  const extractFeatures = (): {
+    title: string;
+    description: string;
+    icon: string;
+  }[] => {
+    const featuresMatch = content.match(
+      /features:\s*\[([\s\S]*?)\],\s*\n\s*\/\//m,
+    );
     if (!featuresMatch) return [];
-    
+
     const featuresContent = featuresMatch[1];
     const features: { title: string; description: string; icon: string }[] = [];
-    const featureRegex = /\{\s*title:\s*['"`]([^'"`]*)['"`],\s*description:\s*['"`]([^'"`]*)['"`],\s*icon:\s*['"`]([^'"`]*)['"`]/g;
+    const featureRegex =
+      /\{\s*title:\s*['"`]([^'"`]*)['"`],\s*description:\s*['"`]([^'"`]*)['"`],\s*icon:\s*['"`]([^'"`]*)['"`]/g;
     let featureMatch;
     while ((featureMatch = featureRegex.exec(featuresContent)) !== null) {
       features.push({
@@ -105,44 +112,44 @@ function parseBrandingFile(content: string): BrandingSettings {
   };
 
   return {
-    companyName: extract('companyName', 'Company Name'),
-    tagline: extract('tagline', 'Your tagline here'),
-    description: extract('description', 'Your description here'),
-    chatbotName: extract('chatbotName', 'Assistant'),
-    welcomeMessage: extract('welcomeMessage', 'How can I help you today?'),
-    suggestedQuestions: extractArray('suggestedQuestions'),
-    inputPlaceholder: extract('inputPlaceholder', 'Type a message...'),
-    primaryColor: extract('primaryColor', 'amber'),
-    userMessageColor: extract('userMessageColor', 'amber'),
-    chatButtonColor: extract('chatButtonColor', 'blue'),
-    supportEmail: extract('supportEmail', ''),
-    websiteUrl: extract('websiteUrl', ''),
-    privacyPolicyUrl: extract('privacyPolicyUrl', ''),
-    termsOfServiceUrl: extract('termsOfServiceUrl', ''),
-    adminTitle: extract('adminTitle', 'Admin Dashboard'),
-    showPoweredBy: extractBool('showPoweredBy', true),
+    companyName: extract("companyName", "Company Name"),
+    tagline: extract("tagline", "Your tagline here"),
+    description: extract("description", "Your description here"),
+    chatbotName: extract("chatbotName", "Assistant"),
+    welcomeMessage: extract("welcomeMessage", "How can I help you today?"),
+    suggestedQuestions: extractArray("suggestedQuestions"),
+    inputPlaceholder: extract("inputPlaceholder", "Type a message..."),
+    primaryColor: extract("primaryColor", "amber"),
+    userMessageColor: extract("userMessageColor", "amber"),
+    chatButtonColor: extract("chatButtonColor", "blue"),
+    supportEmail: extract("supportEmail", ""),
+    websiteUrl: extract("websiteUrl", ""),
+    privacyPolicyUrl: extract("privacyPolicyUrl", ""),
+    termsOfServiceUrl: extract("termsOfServiceUrl", ""),
+    adminTitle: extract("adminTitle", "Admin Dashboard"),
+    showPoweredBy: extractBool("showPoweredBy", true),
     features: extractFeatures(),
   };
 }
 
 function parseContentFile(content: string): ContentSettings {
-  const extract = (key: string, defaultValue: string = ''): string => {
-    const regex = new RegExp(`${key}:\\s*['"\`]([^'"\`]*)['"\`]`, 'm');
+  const extract = (key: string, defaultValue: string = ""): string => {
+    const regex = new RegExp(`${key}:\\s*['"\`]([^'"\`]*)['"\`]`, "m");
     const match = content.match(regex);
     return match ? match[1] : defaultValue;
   };
 
   const extractBool = (key: string, defaultValue: boolean = false): boolean => {
-    const regex = new RegExp(`${key}:\\s*(true|false)`, 'm');
+    const regex = new RegExp(`${key}:\\s*(true|false)`, "m");
     const match = content.match(regex);
-    return match ? match[1] === 'true' : defaultValue;
+    return match ? match[1] === "true" : defaultValue;
   };
 
   const extractArray = (key: string): string[] => {
-    const regex = new RegExp(`${key}:\\s*\\[([^\\]]*?)\\]`, 'ms');
+    const regex = new RegExp(`${key}:\\s*\\[([^\\]]*?)\\]`, "ms");
     const match = content.match(regex);
     if (!match) return [];
-    
+
     const arrayContent = match[1];
     const items: string[] = [];
     const itemRegex = /['"`]([^'"`]*)['"`]/g;
@@ -154,13 +161,20 @@ function parseContentFile(content: string): ContentSettings {
   };
 
   // Extract howItWorksSteps array
-  const extractSteps = (): { step: string; title: string; description: string }[] => {
-    const stepsMatch = content.match(/howItWorksSteps:\s*\[([\s\S]*?)\],\s*\n\s*\/\//m);
+  const extractSteps = (): {
+    step: string;
+    title: string;
+    description: string;
+  }[] => {
+    const stepsMatch = content.match(
+      /howItWorksSteps:\s*\[([\s\S]*?)\],\s*\n\s*\/\//m,
+    );
     if (!stepsMatch) return [];
-    
+
     const stepsContent = stepsMatch[1];
     const steps: { step: string; title: string; description: string }[] = [];
-    const stepRegex = /\{\s*step:\s*['"`]([^'"`]*)['"`],\s*title:\s*['"`]([^'"`]*)['"`],\s*description:\s*['"`]([^'"`]*)['"`]/g;
+    const stepRegex =
+      /\{\s*step:\s*['"`]([^'"`]*)['"`],\s*title:\s*['"`]([^'"`]*)['"`],\s*description:\s*['"`]([^'"`]*)['"`]/g;
     let stepMatch;
     while ((stepMatch = stepRegex.exec(stepsContent)) !== null) {
       steps.push({
@@ -173,25 +187,25 @@ function parseContentFile(content: string): ContentSettings {
   };
 
   return {
-    heroHeading: extract('heroHeading', 'Welcome'),
-    heroSubheading: extract('heroSubheading', 'Your subheading here'),
-    heroCtaText: extract('heroCtaText', 'Get Started'),
-    heroCtaLink: extract('heroCtaLink', ''),
-    featuresHeading: extract('featuresHeading', 'Why Choose Us'),
-    featuresSubheading: extract('featuresSubheading', 'Our features'),
-    showHowItWorks: extractBool('showHowItWorks', false),
-    howItWorksHeading: extract('howItWorksHeading', 'How It Works'),
+    heroHeading: extract("heroHeading", "Welcome"),
+    heroSubheading: extract("heroSubheading", "Your subheading here"),
+    heroCtaText: extract("heroCtaText", "Get Started"),
+    heroCtaLink: extract("heroCtaLink", ""),
+    featuresHeading: extract("featuresHeading", "Why Choose Us"),
+    featuresSubheading: extract("featuresSubheading", "Our features"),
+    showHowItWorks: extractBool("showHowItWorks", false),
+    howItWorksHeading: extract("howItWorksHeading", "How It Works"),
     howItWorksSteps: extractSteps(),
-    showBenefits: extractBool('showBenefits', false),
-    benefitsHeading: extract('benefitsHeading', 'Benefits'),
-    benefits: extractArray('benefits'),
-    showBottomCta: extractBool('showBottomCta', false),
-    bottomCtaHeading: extract('bottomCtaHeading', 'Ready to get started?'),
-    bottomCtaDescription: extract('bottomCtaDescription', 'Get in touch'),
-    bottomCtaButtonText: extract('bottomCtaButtonText', 'Contact Us'),
-    bottomCtaButtonLink: extract('bottomCtaButtonLink', ''),
-    footerText: extract('footerText', ''),
-    showFooterLinks: extractBool('showFooterLinks', false),
+    showBenefits: extractBool("showBenefits", false),
+    benefitsHeading: extract("benefitsHeading", "Benefits"),
+    benefits: extractArray("benefits"),
+    showBottomCta: extractBool("showBottomCta", false),
+    bottomCtaHeading: extract("bottomCtaHeading", "Ready to get started?"),
+    bottomCtaDescription: extract("bottomCtaDescription", "Get in touch"),
+    bottomCtaButtonText: extract("bottomCtaButtonText", "Contact Us"),
+    bottomCtaButtonLink: extract("bottomCtaButtonLink", ""),
+    footerText: extract("footerText", ""),
+    showFooterLinks: extractBool("showFooterLinks", false),
   };
 }
 
@@ -203,13 +217,13 @@ function generateBrandingFile(settings: BrandingSettings): string {
       title: '${f.title.replace(/'/g, "\\'")}',
       description: '${f.description.replace(/'/g, "\\'")}',
       icon: '${f.icon}',
-    }`
+    }`,
     )
-    .join(',\n');
+    .join(",\n");
 
   const suggestedQuestionsStr = settings.suggestedQuestions
     .map((q) => `    '${q.replace(/'/g, "\\'")}'`)
-    .join(',\n');
+    .join(",\n");
 
   return `/**
  * ============================================
@@ -320,13 +334,13 @@ function generateContentFile(settings: ContentSettings): string {
       step: '${s.step}',
       title: '${s.title.replace(/'/g, "\\'")}',
       description: '${s.description.replace(/'/g, "\\'")}',
-    }`
+    }`,
     )
-    .join(',\n');
+    .join(",\n");
 
   const benefitsStr = settings.benefits
     .map((b) => `    '${b.replace(/'/g, "\\'")}'`)
-    .join(',\n');
+    .join(",\n");
 
   return `/**
  * ============================================
@@ -438,53 +452,58 @@ export type Content = typeof content;
 
 export async function fetchBrandingSettings(): Promise<BrandingSettings> {
   try {
-    const fileContent = await fs.readFile(BRANDING_FILE_PATH, 'utf-8');
+    const fileContent = await fs.readFile(BRANDING_FILE_PATH, "utf-8");
     return parseBrandingFile(fileContent);
   } catch (error) {
-    console.error('Error reading branding file:', error);
-    throw new Error('Failed to read branding settings');
+    console.error("Error reading branding file:", error);
+    throw new Error("Failed to read branding settings");
   }
 }
 
 export async function fetchContentSettings(): Promise<ContentSettings> {
   try {
-    const fileContent = await fs.readFile(CONTENT_FILE_PATH, 'utf-8');
+    const fileContent = await fs.readFile(CONTENT_FILE_PATH, "utf-8");
     return parseContentFile(fileContent);
   } catch (error) {
-    console.error('Error reading content file:', error);
-    throw new Error('Failed to read content settings');
+    console.error("Error reading content file:", error);
+    throw new Error("Failed to read content settings");
   }
 }
 
 export async function updateBrandingSettings(
-  settings: BrandingSettings
+  settings: BrandingSettings,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const newContent = generateBrandingFile(settings);
-    await fs.writeFile(BRANDING_FILE_PATH, newContent, 'utf-8');
+    await fs.writeFile(BRANDING_FILE_PATH, newContent, "utf-8");
     return { success: true };
   } catch (error) {
-    console.error('Error writing branding file:', error);
+    console.error("Error writing branding file:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to save branding settings',
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to save branding settings",
     };
   }
 }
 
 export async function updateContentSettings(
-  settings: ContentSettings
+  settings: ContentSettings,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const newContent = generateContentFile(settings);
-    await fs.writeFile(CONTENT_FILE_PATH, newContent, 'utf-8');
+    await fs.writeFile(CONTENT_FILE_PATH, newContent, "utf-8");
     return { success: true };
   } catch (error) {
-    console.error('Error writing content file:', error);
+    console.error("Error writing content file:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to save content settings',
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to save content settings",
     };
   }
 }
-
