@@ -45,7 +45,17 @@ export async function verifyToken(token: string): Promise<SessionPayload | null>
   try {
     const secret = getJwtSecret();
     const { payload } = await jwtVerify(token, secret);
-    return payload as SessionPayload;
+    
+    // Validate the payload has the expected shape
+    if (typeof payload.authenticated !== 'boolean') {
+      return null;
+    }
+    
+    return {
+      authenticated: payload.authenticated as boolean,
+      iat: payload.iat ?? 0,
+      exp: payload.exp ?? 0,
+    };
   } catch {
     return null;
   }
