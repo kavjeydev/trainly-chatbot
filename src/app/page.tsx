@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import ChatWidget from '@/components/ChatWidget';
 import { branding } from '@/config/branding';
+import { content } from '@/config/content';
 
 const featureIcons = {
   bolt: (
@@ -20,6 +21,21 @@ const featureIcons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
     </svg>
   ),
+  chat: (
+    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+  ),
+  shield: (
+    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+    </svg>
+  ),
+  clock: (
+    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
 };
 
 export default function Home() {
@@ -29,6 +45,11 @@ export default function Home() {
     const timer = setTimeout(() => setShowPulse(false), 5000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Split hero heading for styling (first part normal, second part highlighted)
+  const headingParts = content.heroHeading.includes(',')
+    ? content.heroHeading.split(',')
+    : [content.heroHeading];
 
   return (
     <main className="gradient-bg grid-pattern min-h-screen">
@@ -40,24 +61,40 @@ export default function Home() {
             {branding.companyName}
           </div>
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight tracking-tighter">
-            {branding.tagline.split(',')[0]},{' '}
-            <span className="text-amber-400">
-              {branding.tagline.split(',')[1]?.trim() || 'instant answers'}
-            </span>
+            {headingParts[0]}
+            {headingParts[1] && (
+              <>
+                ,{' '}
+                <span className="text-amber-400">
+                  {headingParts[1].trim()}
+                </span>
+              </>
+            )}
           </h1>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-10">
-            {branding.description}
+            {content.heroSubheading}
           </p>
 
-          {/* Call attention to the chat widget */}
+          {/* CTA Button or Chat pointer */}
           <div className="flex flex-col items-center gap-6">
-            <div className="flex items-center gap-3 text-blue-400">
-              <span className="text-sm font-medium">Try it now</span>
-              <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </div>
-            <p className="text-sm text-gray-500">Click the chat button in the bottom right corner</p>
+            {content.heroCtaLink ? (
+              <a
+                href={content.heroCtaLink}
+                className="px-8 py-4 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+              >
+                {content.heroCtaText}
+              </a>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 text-blue-400">
+                  <span className="text-sm font-medium">{content.heroCtaText}</span>
+                  <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+                <p className="text-sm text-gray-500">Click the chat button in the bottom right corner</p>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -66,9 +103,11 @@ export default function Home() {
       <section id="features" className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4 tracking-tighter">Why Choose {branding.companyName}</h2>
+            <h2 className="text-3xl font-bold text-white mb-4 tracking-tighter">
+              {content.featuresHeading || `Why Choose ${branding.companyName}`}
+            </h2>
             <p className="text-gray-400 max-w-xl mx-auto">
-              Built with cutting-edge technology to deliver exceptional AI experiences.
+              {content.featuresSubheading}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -87,6 +126,75 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* How It Works Section */}
+      {content.showHowItWorks && (
+        <section id="how-it-works" className="py-20 px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-white mb-4 tracking-tighter">
+                {content.howItWorksHeading}
+              </h2>
+            </div>
+            <div className="space-y-8">
+              {content.howItWorksSteps.map((step, index) => (
+                <div key={index} className="flex gap-6 items-start">
+                  <div className="w-12 h-12 rounded-full bg-amber-500 text-black font-bold flex items-center justify-center flex-shrink-0 text-lg">
+                    {step.step}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
+                    <p className="text-gray-400">{step.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Benefits Section */}
+      {content.showBenefits && (
+        <section id="benefits" className="py-20 px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="p-8 md:p-12 bg-white/5 border border-white/10 rounded-3xl">
+              <h2 className="text-2xl font-bold text-white mb-6 tracking-tighter">
+                {content.benefitsHeading}
+              </h2>
+              <ul className="space-y-4">
+                {content.benefits.map((benefit, index) => (
+                  <li key={index} className="flex items-center gap-3 text-gray-300">
+                    <svg className="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Bottom CTA Section */}
+      {content.showBottomCta && (
+        <section id="cta" className="py-20 px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-white mb-4 tracking-tighter">
+              {content.bottomCtaHeading}
+            </h2>
+            <p className="text-gray-400 mb-8 max-w-xl mx-auto">
+              {content.bottomCtaDescription}
+            </p>
+            <a
+              href={content.bottomCtaButtonLink}
+              className="inline-flex px-8 py-4 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+            >
+              {content.bottomCtaButtonText}
+            </a>
+          </div>
+        </section>
+      )}
 
       {/* About Section */}
       {branding.showPoweredBy && (
@@ -111,6 +219,15 @@ export default function Home() {
             </div>
           </div>
         </section>
+      )}
+
+      {/* Footer */}
+      {content.footerText && (
+        <footer className="py-8 px-6 border-t border-white/5">
+          <div className="max-w-4xl mx-auto text-center text-gray-500 text-sm">
+            {content.footerText}
+          </div>
+        </footer>
       )}
 
       {/* Floating indicator pointing to chat */}
