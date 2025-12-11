@@ -100,10 +100,25 @@ export const colorMap = {
 
 export type ColorName = keyof typeof colorMap;
 
+/**
+ * Check if a string is a valid hex color
+ */
+export function isHexColor(color: string): boolean {
+  return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+}
+
+/**
+ * Get color value - supports both preset color names and custom hex values
+ */
 export function getColor(
   colorName: string,
   shade: keyof typeof colorMap.amber = 500,
 ): string {
+  // If it's a hex color, return it directly
+  if (isHexColor(colorName)) {
+    return colorName;
+  }
+
   const color = colorMap[colorName as ColorName];
   if (!color) {
     return colorMap.amber[shade]; // fallback to amber
@@ -111,6 +126,9 @@ export function getColor(
   return color[shade];
 }
 
+/**
+ * Get color with alpha - supports both preset color names and custom hex values
+ */
 export function getColorWithAlpha(
   colorName: string,
   shade: keyof typeof colorMap.amber = 500,
@@ -121,4 +139,32 @@ export function getColorWithAlpha(
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/**
+ * Lighten a hex color by a percentage
+ */
+export function lightenColor(hex: string, percent: number): string {
+  // Remove # if present
+  const color = hex.replace("#", "");
+
+  const r = parseInt(color.slice(0, 2), 16);
+  const g = parseInt(color.slice(2, 4), 16);
+  const b = parseInt(color.slice(4, 6), 16);
+
+  const newR = Math.min(255, Math.round(r + (255 - r) * (percent / 100)));
+  const newG = Math.min(255, Math.round(g + (255 - g) * (percent / 100)));
+  const newB = Math.min(255, Math.round(b + (255 - b) * (percent / 100)));
+
+  return `#${newR.toString(16).padStart(2, "0")}${newG.toString(16).padStart(2, "0")}${newB.toString(16).padStart(2, "0")}`;
+}
+
+/**
+ * Get a lighter shade of the color (for hover states, etc.)
+ */
+export function getColorLight(colorName: string): string {
+  if (isHexColor(colorName)) {
+    return lightenColor(colorName, 15);
+  }
+  return getColor(colorName, 400);
 }

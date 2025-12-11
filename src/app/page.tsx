@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import ChatWidget from "@/components/ChatWidget";
 import { branding } from "@/config/branding";
 import { content } from "@/config/content";
-import { getColor, getColorWithAlpha } from "@/lib/colors";
+import { getColor, getColorWithAlpha, getColorLight } from "@/lib/colors";
 
 const featureIcons = {
   bolt: (
@@ -104,7 +104,7 @@ export default function Home() {
 
   // Get dynamic colors from branding
   const primaryColor = getColor(branding.primaryColor, 500);
-  const primaryColorLight = getColor(branding.primaryColor, 400);
+  const primaryColorLight = getColorLight(branding.primaryColor);
   const primaryColorAlpha10 = getColorWithAlpha(
     branding.primaryColor,
     500,

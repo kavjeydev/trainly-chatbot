@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { askTrainly } from "@/app/actions/chat";
 import { branding } from "@/config/branding";
-import { getColor, getColorWithAlpha } from "@/lib/colors";
+import { getColor, getColorWithAlpha, getColorLight } from "@/lib/colors";
 import ReactMarkdown from "react-markdown";
 
 interface Message {
@@ -23,7 +23,7 @@ export default function ChatWidget() {
 
   // Get colors from branding
   const primaryColor = getColor(branding.primaryColor, 500);
-  const primaryColorLight = getColor(branding.primaryColor, 400);
+  const primaryColorLight = getColorLight(branding.primaryColor);
   const primaryColorAlpha = getColorWithAlpha(branding.primaryColor, 500, 0.2);
   const primaryColorAlpha10 = getColorWithAlpha(
     branding.primaryColor,
