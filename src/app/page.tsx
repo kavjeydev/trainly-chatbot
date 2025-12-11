@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ChatWidget from "@/components/ChatWidget";
 import { branding } from "@/config/branding";
 import { content } from "@/config/content";
+import { getColor, getColorWithAlpha } from "@/lib/colors";
 
 const featureIcons = {
   bolt: (
@@ -101,6 +102,26 @@ const featureIcons = {
 export default function Home() {
   const [showPulse, setShowPulse] = useState(true);
 
+  // Get dynamic colors from branding
+  const primaryColor = getColor(branding.primaryColor, 500);
+  const primaryColorLight = getColor(branding.primaryColor, 400);
+  const primaryColorAlpha10 = getColorWithAlpha(
+    branding.primaryColor,
+    500,
+    0.1,
+  );
+  const primaryColorAlpha20 = getColorWithAlpha(
+    branding.primaryColor,
+    500,
+    0.2,
+  );
+  const primaryColorAlpha30 = getColorWithAlpha(
+    branding.primaryColor,
+    500,
+    0.3,
+  );
+  const chatButtonColor = getColor(branding.chatButtonColor, 500);
+
   useEffect(() => {
     const timer = setTimeout(() => setShowPulse(false), 5000);
     return () => clearTimeout(timer);
@@ -116,8 +137,18 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-20 pb-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-medium mb-6">
-            <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6"
+            style={{
+              backgroundColor: primaryColorAlpha10,
+              border: `1px solid ${primaryColorAlpha20}`,
+              color: primaryColorLight,
+            }}
+          >
+            <div
+              className="w-1.5 h-1.5 rounded-full animate-pulse"
+              style={{ backgroundColor: primaryColorLight }}
+            />
             {branding.companyName}
           </div>
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight tracking-tighter">
@@ -125,7 +156,9 @@ export default function Home() {
             {headingParts[1] && (
               <>
                 ,{" "}
-                <span className="text-amber-400">{headingParts[1].trim()}</span>
+                <span style={{ color: primaryColorLight }}>
+                  {headingParts[1].trim()}
+                </span>
               </>
             )}
           </h1>
@@ -138,13 +171,26 @@ export default function Home() {
             {content.heroCtaLink ? (
               <a
                 href={content.heroCtaLink}
-                className="px-8 py-4 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+                className="px-8 py-4 text-black font-semibold rounded-xl transition-colors"
+                style={{
+                  backgroundColor: primaryColor,
+                  boxShadow: `0 10px 15px -3px ${primaryColorAlpha20}`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = primaryColorLight;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = primaryColor;
+                }}
               >
                 {content.heroCtaText}
               </a>
             ) : (
               <>
-                <div className="flex items-center gap-3 text-blue-400">
+                <div
+                  className="flex items-center gap-3"
+                  style={{ color: chatButtonColor }}
+                >
                   <span className="text-sm font-medium">
                     {content.heroCtaText}
                   </span>
@@ -186,9 +232,23 @@ export default function Home() {
             {branding.features.map((feature, index) => (
               <div
                 key={index}
-                className="p-6 bg-white/5 border border-white/10 rounded-2xl hover:border-amber-500/30 transition-colors group"
+                className="p-6 bg-white/5 border border-white/10 rounded-2xl transition-colors group"
+                style={{ ["--hover-border" as string]: primaryColorAlpha30 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = primaryColorAlpha30;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                }}
               >
-                <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4 group-hover:bg-amber-500/20 transition-colors">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors"
+                  style={{
+                    backgroundColor: primaryColorAlpha10,
+                    border: `1px solid ${primaryColorAlpha20}`,
+                    color: primaryColorLight,
+                  }}
+                >
                   {featureIcons[feature.icon as keyof typeof featureIcons] ||
                     featureIcons.bolt}
                 </div>
@@ -216,7 +276,10 @@ export default function Home() {
             <div className="space-y-8">
               {content.howItWorksSteps.map((step, index) => (
                 <div key={index} className="flex gap-6 items-start">
-                  <div className="w-12 h-12 rounded-full bg-amber-500 text-black font-bold flex items-center justify-center flex-shrink-0 text-lg">
+                  <div
+                    className="w-12 h-12 rounded-full text-black font-bold flex items-center justify-center flex-shrink-0 text-lg"
+                    style={{ backgroundColor: primaryColor }}
+                  >
                     {step.step}
                   </div>
                   <div>
@@ -247,7 +310,8 @@ export default function Home() {
                     className="flex items-center gap-3 text-gray-300"
                   >
                     <svg
-                      className="w-5 h-5 text-amber-400 flex-shrink-0"
+                      className="w-5 h-5 flex-shrink-0"
+                      style={{ color: primaryColorLight }}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -280,7 +344,17 @@ export default function Home() {
             </p>
             <a
               href={content.bottomCtaButtonLink}
-              className="inline-flex px-8 py-4 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+              className="inline-flex px-8 py-4 text-black font-semibold rounded-xl transition-colors"
+              style={{
+                backgroundColor: primaryColor,
+                boxShadow: `0 10px 15px -3px ${primaryColorAlpha20}`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = primaryColorLight;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = primaryColor;
+              }}
             >
               {content.bottomCtaButtonText}
             </a>
@@ -292,9 +366,18 @@ export default function Home() {
       {branding.showPoweredBy && (
         <section id="about" className="py-20 px-6">
           <div className="max-w-4xl mx-auto">
-            <div className="p-8 md:p-12 bg-amber-500/5 border border-amber-500/20 rounded-3xl">
+            <div
+              className="p-8 md:p-12 rounded-3xl"
+              style={{
+                backgroundColor: primaryColorAlpha10,
+                border: `1px solid ${primaryColorAlpha20}`,
+              }}
+            >
               <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="w-20 h-20 rounded-2xl bg-amber-500 flex items-center justify-center flex-shrink-0">
+                <div
+                  className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: primaryColor }}
+                >
                   <svg
                     className="w-10 h-10 text-black"
                     fill="none"
@@ -338,10 +421,16 @@ export default function Home() {
       {/* Floating indicator pointing to chat */}
       {showPulse && (
         <div className="fixed bottom-24 right-6 z-40 flex items-center gap-2 animate-fade-in">
-          <div className="px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg shadow-lg">
+          <div
+            className="px-3 py-2 text-white text-sm font-medium rounded-lg shadow-lg"
+            style={{ backgroundColor: chatButtonColor }}
+          >
             Chat with us!
           </div>
-          <div className="w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-8 border-l-blue-500" />
+          <div
+            className="w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-8"
+            style={{ borderLeftColor: chatButtonColor }}
+          />
         </div>
       )}
 

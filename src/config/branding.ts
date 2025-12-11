@@ -72,10 +72,10 @@ export const branding = {
   // Options: amber, blue, green, purple, red, pink, indigo, cyan, teal, emerald
 
   /** Primary accent color */
-  primaryColor: 'amber',
+  primaryColor: 'teal',
 
   /** Chat bubble color for user messages */
-  userMessageColor: 'amber',
+  userMessageColor: 'teal',
 
   /** Chat button color */
   chatButtonColor: 'blue',

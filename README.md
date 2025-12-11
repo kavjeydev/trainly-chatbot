@@ -279,7 +279,7 @@ All AI requests are made server-side through Next.js API routes.
 
 **Q: Do I need to sign up for Trainly?**
 
-> Not for your first client — API keys are included! For additional clients, sign up at [trainlyai.com](https://trainlyai.com).
+> **No — not for your first client!** API keys are included with your purchase. You only need a Trainly account if you want to add a **second client** or beyond.
 
 **Q: Can I remove "Powered by Trainly"?**
 
