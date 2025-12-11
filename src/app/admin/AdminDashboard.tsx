@@ -13,9 +13,7 @@ import {
 } from "@/app/actions/trainlySettings";
 import {
   fetchBrandingSettings,
-  updateBrandingSettings,
   fetchContentSettings,
-  updateContentSettings,
   type BrandingSettings,
   type ContentSettings,
 } from "@/app/actions/brandingSettings";
@@ -89,9 +87,7 @@ export default function AdminDashboard() {
 
   // Branding settings state
   const [isLoadingBranding, setIsLoadingBranding] = useState(false);
-  const [isSavingBranding, setIsSavingBranding] = useState(false);
   const [brandingError, setBrandingError] = useState<string | null>(null);
-  const [brandingSuccess, setBrandingSuccess] = useState(false);
   const [brandingSettings, setBrandingSettings] = useState<BrandingSettings>({
     companyName: "",
     tagline: "",
@@ -114,9 +110,7 @@ export default function AdminDashboard() {
 
   // Content settings state
   const [isLoadingContent, setIsLoadingContent] = useState(false);
-  const [isSavingContent, setIsSavingContent] = useState(false);
   const [contentError, setContentError] = useState<string | null>(null);
-  const [contentSuccess, setContentSuccess] = useState(false);
   const [contentSettings, setContentSettings] = useState<ContentSettings>({
     heroHeading: "",
     heroSubheading: "",
@@ -150,7 +144,220 @@ export default function AdminDashboard() {
   // Embed code state
   const [embedCopied, setEmbedCopied] = useState(false);
 
+  // Config generator modal state
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [configType, setConfigType] = useState<"branding" | "content" | "both">("both");
+  const [copiedConfig, setCopiedConfig] = useState<string | null>(null);
+
   const router = useRouter();
+
+  // Generate branding.ts file content
+  const generateBrandingConfig = (): string => {
+    const s = brandingSettings;
+    return `/**
+ * ============================================
+ * BRANDING CONFIGURATION
+ * ============================================
+ *
+ * Edit these values to customize your chatbot's appearance and branding.
+ * After making changes, redeploy your site to see the updates.
+ */
+
+export const branding = {
+  // ============================================
+  // COMPANY INFO
+  // ============================================
+
+  /** Your company or client's name */
+  companyName: '${escapeString(s.companyName)}',
+
+  /** Short tagline displayed in the header */
+  tagline: '${escapeString(s.tagline)}',
+
+  /** Longer description for SEO and about sections */
+  description: '${escapeString(s.description)}',
+
+  // ============================================
+  // CHATBOT SETTINGS
+  // ============================================
+
+  /** Name shown in the chat header */
+  chatbotName: '${escapeString(s.chatbotName)}',
+
+  /** First message the chatbot sends */
+  welcomeMessage: '${escapeString(s.welcomeMessage)}',
+
+  /** Suggested questions shown to users */
+  suggestedQuestions: [
+${s.suggestedQuestions.map(q => `    '${escapeString(q)}',`).join('\n')}
+  ],
+
+  /** Placeholder text in the input field */
+  inputPlaceholder: '${escapeString(s.inputPlaceholder)}',
+
+  // ============================================
+  // COLORS
+  // ============================================
+  // Presets: amber, blue, green, purple, red, pink, indigo, cyan, teal, emerald
+  // Custom: Any hex color like #ff5733
+
+  /** Primary accent color */
+  primaryColor: '${s.primaryColor}',
+
+  /** Chat bubble color for user messages */
+  userMessageColor: '${s.userMessageColor}',
+
+  /** Chat button color */
+  chatButtonColor: '${s.chatButtonColor}',
+
+  // ============================================
+  // LINKS & CONTACT
+  // ============================================
+
+  /** Support email address */
+  supportEmail: '${escapeString(s.supportEmail)}',
+
+  /** Main website URL */
+  websiteUrl: '${escapeString(s.websiteUrl)}',
+
+  /** Privacy policy URL */
+  privacyPolicyUrl: '${escapeString(s.privacyPolicyUrl)}',
+
+  /** Terms of service URL */
+  termsOfServiceUrl: '${escapeString(s.termsOfServiceUrl)}',
+
+  // ============================================
+  // ADMIN SETTINGS
+  // ============================================
+
+  /** Admin dashboard title */
+  adminTitle: '${escapeString(s.adminTitle)}',
+
+  /** Show "Powered by" footer */
+  showPoweredBy: ${s.showPoweredBy},
+
+  // ============================================
+  // FEATURES (shown on landing page)
+  // ============================================
+
+  features: [
+${s.features.map(f => `    {
+      title: '${escapeString(f.title)}',
+      description: '${escapeString(f.description)}',
+      icon: '${f.icon}',
+    },`).join('\n')}
+  ],
+} as const;
+
+export type Branding = typeof branding;
+`;
+  };
+
+  // Generate content.ts file content
+  const generateContentConfig = (): string => {
+    const c = contentSettings;
+    return `/**
+ * ============================================
+ * LANDING PAGE CONTENT
+ * ============================================
+ *
+ * Edit these values to customize your landing page text.
+ * After making changes, redeploy your site to see the updates.
+ */
+
+export const content = {
+  // ============================================
+  // HERO SECTION
+  // ============================================
+
+  heroHeading: '${escapeString(c.heroHeading)}',
+  heroSubheading: '${escapeString(c.heroSubheading)}',
+  heroCtaText: '${escapeString(c.heroCtaText)}',
+  heroCtaLink: '${escapeString(c.heroCtaLink)}',
+
+  // ============================================
+  // FEATURES SECTION
+  // ============================================
+
+  featuresHeading: '${escapeString(c.featuresHeading)}',
+  featuresSubheading: '${escapeString(c.featuresSubheading)}',
+
+  // ============================================
+  // HOW IT WORKS SECTION
+  // ============================================
+
+  showHowItWorks: ${c.showHowItWorks},
+  howItWorksHeading: '${escapeString(c.howItWorksHeading)}',
+  howItWorksSteps: [
+${c.howItWorksSteps.map(step => `    {
+      step: '${escapeString(step.step)}',
+      title: '${escapeString(step.title)}',
+      description: '${escapeString(step.description)}',
+    },`).join('\n')}
+  ],
+
+  // ============================================
+  // BENEFITS SECTION
+  // ============================================
+
+  showBenefits: ${c.showBenefits},
+  benefitsHeading: '${escapeString(c.benefitsHeading)}',
+  benefits: [
+${c.benefits.map(b => `    '${escapeString(b)}',`).join('\n')}
+  ],
+
+  // ============================================
+  // BOTTOM CTA SECTION
+  // ============================================
+
+  showBottomCta: ${c.showBottomCta},
+  bottomCtaHeading: '${escapeString(c.bottomCtaHeading)}',
+  bottomCtaDescription: '${escapeString(c.bottomCtaDescription)}',
+  bottomCtaButtonText: '${escapeString(c.bottomCtaButtonText)}',
+  bottomCtaButtonLink: '${escapeString(c.bottomCtaButtonLink)}',
+
+  // ============================================
+  // FOOTER
+  // ============================================
+
+  footerText: '${escapeString(c.footerText)}',
+  showFooterLinks: ${c.showFooterLinks},
+} as const;
+
+export type Content = typeof content;
+`;
+  };
+
+  // Helper to escape strings for TypeScript
+  const escapeString = (str: string): string => {
+    return str
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/\n/g, '\\n');
+  };
+
+  // Copy config to clipboard
+  const copyConfig = async (type: "branding" | "content") => {
+    const config = type === "branding" ? generateBrandingConfig() : generateContentConfig();
+    await navigator.clipboard.writeText(config);
+    setCopiedConfig(type);
+    setTimeout(() => setCopiedConfig(null), 2000);
+  };
+
+  // Download config file
+  const downloadConfig = (type: "branding" | "content") => {
+    const config = type === "branding" ? generateBrandingConfig() : generateContentConfig();
+    const filename = type === "branding" ? "branding.ts" : "content.ts";
+    const blob = new Blob([config], { type: "text/typescript" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   // Load files on mount
   useEffect(() => {
@@ -190,30 +397,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleSaveBranding = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSavingBranding(true);
-    setBrandingError(null);
-    setBrandingSuccess(false);
-    try {
-      const result = await updateBrandingSettings(brandingSettings);
-      if (result.success) {
-        setBrandingSuccess(true);
-        setTimeout(() => setBrandingSuccess(false), 3000);
-      } else {
-        setBrandingError(result.error || "Failed to save branding settings");
-      }
-    } catch (error) {
-      setBrandingError(
-        error instanceof Error
-          ? error.message
-          : "Failed to save branding settings",
-      );
-    } finally {
-      setIsSavingBranding(false);
-    }
-  };
-
   // Content settings handlers
   const loadContentSettings = async () => {
     setIsLoadingContent(true);
@@ -229,30 +412,6 @@ export default function AdminDashboard() {
       );
     } finally {
       setIsLoadingContent(false);
-    }
-  };
-
-  const handleSaveContent = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSavingContent(true);
-    setContentError(null);
-    setContentSuccess(false);
-    try {
-      const result = await updateContentSettings(contentSettings);
-      if (result.success) {
-        setContentSuccess(true);
-        setTimeout(() => setContentSuccess(false), 3000);
-      } else {
-        setContentError(result.error || "Failed to save content settings");
-      }
-    } catch (error) {
-      setContentError(
-        error instanceof Error
-          ? error.message
-          : "Failed to save content settings",
-      );
-    } finally {
-      setIsSavingContent(false);
     }
   };
 
@@ -543,10 +702,10 @@ export default function AdminDashboard() {
       <div className="max-w-5xl mx-auto px-6 py-6 space-y-6">
         {/* Branding Tab */}
         {activeTab === "branding" && (
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-6">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   <span>🎨</span>
                   Branding & Identity
                 </h2>
@@ -556,7 +715,7 @@ export default function AdminDashboard() {
               </div>
               <button
                 onClick={loadBrandingSettings}
-                disabled={isLoadingBranding || isSavingBranding}
+                disabled={isLoadingBranding}
                 className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
               >
                 <svg
@@ -571,7 +730,7 @@ export default function AdminDashboard() {
                     strokeWidth={2}
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
-                </svg>
+              </svg>
                 {isLoadingBranding ? "Loading…" : "Reload"}
               </button>
             </div>
@@ -582,26 +741,18 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {brandingSuccess && (
-              <div className="mb-4 text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 flex items-center gap-2">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                Branding saved! Refresh the page to see changes.
+            {/* Info banner about config generation */}
+            <div className="mb-4 text-sm text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-xl px-4 py-3 flex items-start gap-2">
+              <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <strong>How it works:</strong> Edit your settings below, then click &quot;Generate Config&quot; to get a config file.
+                Replace <code className="bg-white/10 px-1 rounded">src/config/branding.ts</code> in your repo and redeploy.
               </div>
-            )}
+            </div>
 
-            <form onSubmit={handleSaveBranding} className="space-y-6">
+            <div className="space-y-6">
               {/* Company Info */}
               <div className="space-y-4">
                 <h3 className="text-sm font-medium text-amber-400 uppercase tracking-wider">
@@ -1116,53 +1267,19 @@ export default function AdminDashboard() {
               </div>
 
               <button
-                type="submit"
-                disabled={isSavingBranding}
-                className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+                type="button"
+                onClick={() => {
+                  setConfigType("branding");
+                  setShowConfigModal(true);
+                }}
+                className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 transition-colors flex items-center justify-center gap-2"
               >
-                {isSavingBranding ? (
-                  <>
-                    <svg
-                      className="w-4 h-4 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Saving…
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Save Branding
-                  </>
-                )}
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Generate Config
               </button>
-            </form>
+            </div>
           </div>
         )}
 
@@ -1174,14 +1291,14 @@ export default function AdminDashboard() {
                 <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   <span>📝</span>
                   Landing Page Content
-                </h2>
+            </h2>
                 <p className="text-sm text-gray-400 mt-1">
                   Edit the text and sections on your landing page
                 </p>
               </div>
               <button
                 onClick={loadContentSettings}
-                disabled={isLoadingContent || isSavingContent}
+                disabled={isLoadingContent}
                 className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
               >
                 <svg
@@ -1207,26 +1324,18 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {contentSuccess && (
-              <div className="mb-4 text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 flex items-center gap-2">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                Content saved! Refresh the page to see changes.
+            {/* Info banner about config generation */}
+            <div className="mb-4 text-sm text-blue-400 bg-blue-500/10 border border-blue-500/30 rounded-xl px-4 py-3 flex items-start gap-2">
+              <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <strong>How it works:</strong> Edit your settings below, then click &quot;Generate Config&quot; to get a config file.
+                Replace <code className="bg-white/10 px-1 rounded">src/config/content.ts</code> in your repo and redeploy.
               </div>
-            )}
+            </div>
 
-            <form onSubmit={handleSaveContent} className="space-y-6">
+            <div className="space-y-6">
               {/* Hero Section */}
               <div className="space-y-4">
                 <h3 className="text-sm font-medium text-amber-400 uppercase tracking-wider">
@@ -1472,53 +1581,19 @@ export default function AdminDashboard() {
               </div>
 
               <button
-                type="submit"
-                disabled={isSavingContent}
-                className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+                type="button"
+                onClick={() => {
+                  setConfigType("content");
+                  setShowConfigModal(true);
+                }}
+                className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 transition-colors flex items-center justify-center gap-2"
               >
-                {isSavingContent ? (
-                  <>
-                    <svg
-                      className="w-4 h-4 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Saving…
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Save Content
-                  </>
-                )}
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Generate Config
               </button>
-            </form>
+            </div>
           </div>
         )}
 
@@ -1535,11 +1610,11 @@ export default function AdminDashboard() {
                   Configure how your chatbot responds
                 </p>
               </div>
-              <button
-                onClick={loadSettings}
-                disabled={isLoadingSettings || isSavingSettings}
-                className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
-              >
+            <button
+              onClick={loadSettings}
+              disabled={isLoadingSettings || isSavingSettings}
+              className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
+            >
                 <svg
                   className={`w-4 h-4 ${isLoadingSettings ? "animate-spin" : ""}`}
                   fill="none"
@@ -1552,84 +1627,84 @@ export default function AdminDashboard() {
                     strokeWidth={2}
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
-                </svg>
+              </svg>
                 {isLoadingSettings ? "Loading…" : "Load Current"}
-              </button>
+            </button>
+          </div>
+
+          {settingsError && (
+            <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+              {settingsError}
             </div>
+          )}
 
-            {settingsError && (
-              <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
-                {settingsError}
-              </div>
-            )}
+          {settingsSuccess && (
+            <div className="mb-4 text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3">
+              Settings saved successfully!
+            </div>
+          )}
 
-            {settingsSuccess && (
-              <div className="mb-4 text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3">
-                Settings saved successfully!
-              </div>
-            )}
-
-            <form className="space-y-5" onSubmit={handleSaveSettings}>
-              <div className="space-y-2">
+          <form className="space-y-5" onSubmit={handleSaveSettings}>
+            <div className="space-y-2">
                 <label className="text-sm text-gray-300 font-medium">
                   System Prompt
                 </label>
-                <textarea
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors resize-none"
-                  placeholder="Set a system prompt to define the assistant's behavior..."
-                  disabled={isSavingSettings}
-                />
-              </div>
+              <textarea
+                value={customPrompt}
+                onChange={(e) => setCustomPrompt(e.target.value)}
+                rows={4}
+                className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors resize-none"
+                placeholder="Set a system prompt to define the assistant's behavior..."
+                disabled={isSavingSettings}
+              />
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2">
                   <label className="text-sm text-gray-300 font-medium">
                     Temperature
                   </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="2"
-                    value={temperature}
-                    onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                    className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
-                    disabled={isSavingSettings}
-                  />
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="2"
+                  value={temperature}
+                  onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                  className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
+                  disabled={isSavingSettings}
+                />
                   <p className="text-xs text-gray-500">
                     0 = focused, 2 = creative
                   </p>
-                </div>
-                <div className="space-y-2">
+              </div>
+              <div className="space-y-2">
                   <label className="text-sm text-gray-300 font-medium">
                     Max Tokens
                   </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="4096"
-                    value={maxTokens}
+                <input
+                  type="number"
+                  min="1"
+                  max="4096"
+                  value={maxTokens}
                     onChange={(e) =>
                       setMaxTokens(parseInt(e.target.value, 10) || 0)
                     }
-                    className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
-                    disabled={isSavingSettings}
-                  />
-                  <p className="text-xs text-gray-500">Response length limit</p>
-                </div>
-                <div className="space-y-2">
+                  className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
+                  disabled={isSavingSettings}
+                />
+                <p className="text-xs text-gray-500">Response length limit</p>
+              </div>
+              <div className="space-y-2">
                   <label className="text-sm text-gray-300 font-medium">
                     Model
                   </label>
-                  <select
-                    value={selectedModel}
-                    onChange={(e) => setSelectedModel(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none transition-colors appearance-none cursor-pointer"
-                    disabled={isSavingSettings}
-                  >
+                <select
+                  value={selectedModel}
+                  onChange={(e) => setSelectedModel(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none transition-colors appearance-none cursor-pointer"
+                  disabled={isSavingSettings}
+                >
                     <option value="gpt-4o-mini" className="bg-gray-900">
                       GPT-4o Mini
                     </option>
@@ -1642,18 +1717,18 @@ export default function AdminDashboard() {
                     <option value="gpt-3.5-turbo" className="bg-gray-900">
                       GPT-3.5 Turbo
                     </option>
-                  </select>
-                  <p className="text-xs text-gray-500">OpenAI model to use</p>
-                </div>
+                </select>
+                <p className="text-xs text-gray-500">OpenAI model to use</p>
               </div>
+            </div>
 
-              <button
-                type="submit"
-                disabled={isSavingSettings}
-                className="px-5 py-2.5 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 disabled:opacity-60 transition-colors flex items-center gap-2"
-              >
-                {isSavingSettings ? (
-                  <>
+            <button
+              type="submit"
+              disabled={isSavingSettings}
+              className="px-5 py-2.5 bg-amber-500 text-black font-semibold rounded-xl hover:bg-amber-400 disabled:opacity-60 transition-colors flex items-center gap-2"
+            >
+              {isSavingSettings ? (
+                <>
                     <svg
                       className="w-4 h-4 animate-spin"
                       fill="none"
@@ -1672,11 +1747,11 @@ export default function AdminDashboard() {
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
-                    </svg>
-                    Saving…
-                  </>
-                ) : (
-                  <>
+                  </svg>
+                  Saving…
+                </>
+              ) : (
+                <>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -1689,33 +1764,33 @@ export default function AdminDashboard() {
                         strokeWidth={2}
                         d="M5 13l4 4L19 7"
                       />
-                    </svg>
-                    Save Settings
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
+                  </svg>
+                  Save Settings
+                </>
+              )}
+            </button>
+          </form>
+        </div>
         )}
 
         {/* Knowledge Base Tab */}
         {activeTab === "files" && (
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-6">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   <span>📁</span>
-                  Knowledge Base
-                </h2>
+              Knowledge Base
+            </h2>
                 <p className="text-sm text-gray-400 mt-1">
                   Upload documents to train your chatbot
                 </p>
               </div>
-              <button
-                onClick={loadFiles}
-                disabled={isLoadingFiles}
-                className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
-              >
+            <button
+              onClick={loadFiles}
+              disabled={isLoadingFiles}
+              className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-50 flex items-center gap-1"
+            >
                 <svg
                   className={`w-4 h-4 ${isLoadingFiles ? "animate-spin" : ""}`}
                   fill="none"
@@ -1728,39 +1803,39 @@ export default function AdminDashboard() {
                     strokeWidth={2}
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
-                </svg>
+              </svg>
                 {isLoadingFiles ? "Loading…" : "Refresh"}
-              </button>
-            </div>
+            </button>
+          </div>
 
-            {filesError && (
-              <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
-                {filesError}
+          {filesError && (
+            <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+              {filesError}
                 <button
                   onClick={() => setFilesError(null)}
                   className="ml-2 text-red-300 hover:text-red-200"
                 >
                   ✕
                 </button>
-              </div>
-            )}
+            </div>
+          )}
 
-            {/* File Upload Area */}
-            <div className="mb-4">
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept=".txt,.md,.json,.csv,.pdf,.docx"
-                onChange={handleFileUpload}
-                className="hidden"
-                id="context-file-upload"
-              />
-              <label
-                htmlFor="context-file-upload"
-                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-amber-500/50 hover:bg-white/5 transition-colors"
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+          {/* File Upload Area */}
+          <div className="mb-4">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept=".txt,.md,.json,.csv,.pdf,.docx"
+              onChange={handleFileUpload}
+              className="hidden"
+              id="context-file-upload"
+            />
+            <label
+              htmlFor="context-file-upload"
+              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-amber-500/50 hover:bg-white/5 transition-colors"
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
                     className="w-8 h-8 mb-3 text-gray-400"
                     fill="none"
@@ -1773,30 +1848,30 @@ export default function AdminDashboard() {
                       strokeWidth={2}
                       d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
-                  </svg>
-                  <p className="text-sm text-gray-400">Click to upload files</p>
+                </svg>
+                <p className="text-sm text-gray-400">Click to upload files</p>
                   <p className="text-xs text-gray-500 mt-1">
                     .txt, .md, .json, .csv, .pdf, .docx
                   </p>
-                </div>
-              </label>
-            </div>
+              </div>
+            </label>
+          </div>
 
-            {/* Upload Progress */}
-            {uploadingFiles.length > 0 && (
-              <div className="mb-4 space-y-2">
-                {uploadingFiles.map((file, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center justify-between px-4 py-2 rounded-lg ${
+          {/* Upload Progress */}
+          {uploadingFiles.length > 0 && (
+            <div className="mb-4 space-y-2">
+              {uploadingFiles.map((file, index) => (
+                <div
+                  key={index}
+                  className={`flex items-center justify-between px-4 py-2 rounded-lg ${
                       file.status === "uploading"
                         ? "bg-amber-500/10 border border-amber-500/30"
                         : file.status === "success"
                           ? "bg-green-500/10 border border-green-500/30"
                           : "bg-red-500/10 border border-red-500/30"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
                       {file.status === "uploading" && (
                         <svg
                           className="w-4 h-4 text-amber-400 animate-spin"
@@ -1816,8 +1891,8 @@ export default function AdminDashboard() {
                             fill="currentColor"
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
-                        </svg>
-                      )}
+                      </svg>
+                    )}
                       {file.status === "success" && (
                         <svg
                           className="w-4 h-4 text-green-400"
@@ -1831,8 +1906,8 @@ export default function AdminDashboard() {
                             strokeWidth={2}
                             d="M5 13l4 4L19 7"
                           />
-                        </svg>
-                      )}
+                      </svg>
+                    )}
                       {file.status === "error" && (
                         <svg
                           className="w-4 h-4 text-red-400"
@@ -1846,8 +1921,8 @@ export default function AdminDashboard() {
                             strokeWidth={2}
                             d="M6 18L18 6M6 6l12 12"
                           />
-                        </svg>
-                      )}
+                      </svg>
+                    )}
                       <span
                         className={`text-sm ${
                           file.status === "uploading"
@@ -1859,7 +1934,7 @@ export default function AdminDashboard() {
                       >
                         {file.name}
                       </span>
-                    </div>
+                  </div>
                     <span
                       className={`text-xs ${
                         file.status === "uploading"
@@ -1873,24 +1948,24 @@ export default function AdminDashboard() {
                         ? "Uploading..."
                         : file.message}
                     </span>
-                  </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
+          )}
 
-            {/* Uploaded Files List */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
+          {/* Uploaded Files List */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
                 <label className="text-sm text-gray-300 font-medium">
                   Uploaded Files
                 </label>
                 <span className="text-xs text-gray-500">
                   {files.length} file{files.length !== 1 ? "s" : ""}
                 </span>
-              </div>
+            </div>
 
-              {isLoadingFiles ? (
-                <div className="flex items-center justify-center py-8">
+            {isLoadingFiles ? (
+              <div className="flex items-center justify-center py-8">
                   <svg
                     className="w-6 h-6 text-amber-400 animate-spin"
                     fill="none"
@@ -1909,21 +1984,21 @@ export default function AdminDashboard() {
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
-                  </svg>
-                </div>
-              ) : files.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 text-sm">
+                </svg>
+              </div>
+            ) : files.length === 0 ? (
+              <div className="text-center py-8 text-gray-500 text-sm">
                   No files uploaded yet. Upload documents to expand the
                   chatbot&apos;s knowledge.
-                </div>
-              ) : (
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {files.map((file) => (
-                    <div
-                      key={file.file_id}
-                      className="flex items-center justify-between px-4 py-3 bg-black/30 rounded-lg group hover:bg-black/40 transition-colors"
-                    >
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {files.map((file) => (
+                  <div
+                    key={file.file_id}
+                    className="flex items-center justify-between px-4 py-3 bg-black/30 rounded-lg group hover:bg-black/40 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                         <svg
                           className="w-5 h-5 text-amber-400 flex-shrink-0"
                           fill="none"
@@ -1936,8 +2011,8 @@ export default function AdminDashboard() {
                             strokeWidth={2}
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                           />
-                        </svg>
-                        <div className="min-w-0 flex-1">
+                      </svg>
+                      <div className="min-w-0 flex-1">
                           <p className="text-sm text-gray-200 truncate">
                             {file.filename}
                           </p>
@@ -1945,14 +2020,14 @@ export default function AdminDashboard() {
                             {formatBytes(file.size_bytes)} • {file.chunk_count}{" "}
                             chunk{file.chunk_count !== 1 ? "s" : ""}
                           </p>
-                        </div>
                       </div>
-                      <button
-                        onClick={() => handleDeleteFile(file.file_id)}
-                        disabled={deletingFileId === file.file_id}
-                        className="text-gray-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50 flex-shrink-0 ml-2"
-                      >
-                        {deletingFileId === file.file_id ? (
+                    </div>
+                    <button
+                      onClick={() => handleDeleteFile(file.file_id)}
+                      disabled={deletingFileId === file.file_id}
+                      className="text-gray-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50 flex-shrink-0 ml-2"
+                    >
+                      {deletingFileId === file.file_id ? (
                           <svg
                             className="w-4 h-4 animate-spin"
                             fill="none"
@@ -1971,8 +2046,8 @@ export default function AdminDashboard() {
                               fill="currentColor"
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
-                          </svg>
-                        ) : (
+                        </svg>
+                      ) : (
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -1985,40 +2060,40 @@ export default function AdminDashboard() {
                               strokeWidth={2}
                               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                             />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
         )}
 
         {/* Embed Code Tab */}
         {activeTab === "embed" && (
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
               <span>🔗</span>
-              Embed on Your Website
-            </h2>
+            Embed on Your Website
+          </h2>
 
-            <p className="text-sm text-gray-400 mb-4">
+          <p className="text-sm text-gray-400 mb-4">
               Add this code to your website to embed the chatbot. Place it
               before the closing{" "}
               <code className="text-amber-400">&lt;/body&gt;</code> tag.
-            </p>
+          </p>
 
-            <div className="relative">
-              <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono">
-                {getEmbedCode()}
-              </pre>
-              <button
-                onClick={copyEmbedCode}
-                className="absolute top-3 right-3 px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
-              >
-                {embedCopied ? (
+          <div className="relative">
+            <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono">
+              {getEmbedCode()}
+            </pre>
+            <button
+              onClick={copyEmbedCode}
+              className="absolute top-3 right-3 px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
+            >
+              {embedCopied ? (
                   <>
                     <svg
                       className="w-3.5 h-3.5"
@@ -2086,6 +2161,143 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+
+      {/* Config Generator Modal */}
+      {showConfigModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#111] border border-white/10 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div>
+                <h2 className="text-xl font-bold text-white">
+                  {configType === "branding" ? "📦 branding.ts" : configType === "content" ? "📝 content.ts" : "📦 Config Files"}
+                </h2>
+                <p className="text-sm text-gray-400 mt-1">
+                  Copy or download this file and replace it in your repository
+                </p>
+              </div>
+              <button
+                onClick={() => setShowConfigModal(false)}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-auto p-6 space-y-6">
+              {(configType === "branding" || configType === "both") && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-amber-400">
+                      src/config/branding.ts
+                    </h3>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => copyConfig("branding")}
+                        className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-white transition-colors flex items-center gap-1"
+                      >
+                        {copiedConfig === "branding" ? (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            Copied!
+                          </>
+                        ) : (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Copy
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => downloadConfig("branding")}
+                        className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-xs text-amber-400 transition-colors flex items-center gap-1"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                  <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono max-h-80 overflow-y-auto">
+                    {generateBrandingConfig()}
+                  </pre>
+                </div>
+              )}
+
+              {(configType === "content" || configType === "both") && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-amber-400">
+                      src/config/content.ts
+                    </h3>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => copyConfig("content")}
+                        className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-white transition-colors flex items-center gap-1"
+                      >
+                        {copiedConfig === "content" ? (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  Copy
+                </>
+              )}
+            </button>
+                      <button
+                        onClick={() => downloadConfig("content")}
+                        className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-xs text-amber-400 transition-colors flex items-center gap-1"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                  <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono max-h-80 overflow-y-auto">
+                    {generateContentConfig()}
+                  </pre>
+                </div>
+              )}
+          </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-white/10 bg-white/5">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+          </div>
+                <div className="text-sm text-gray-400">
+                  <strong className="text-white">Next steps:</strong>
+                  <ol className="mt-2 space-y-1 list-decimal list-inside">
+                    <li>Download or copy the config file above</li>
+                    <li>Replace <code className="bg-white/10 px-1 rounded">src/config/{configType === "content" ? "content" : "branding"}.ts</code> in your repo</li>
+                    <li>Commit and push to trigger a redeploy</li>
+                  </ol>
+        </div>
+      </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
