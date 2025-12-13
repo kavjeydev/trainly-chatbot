@@ -13,32 +13,30 @@ export const branding = {
   // ============================================
 
   /** Your company or client's name */
-  companyName: 'Trainly Chat',
+  companyName: "Trainly Chat",
 
   /** Short tagline displayed in the header */
-  tagline: 'Intelligent conversations, instant answers',
+  tagline: "Intelligent conversations, instant answers",
 
   /** Longer description for SEO and about sections */
-  description: 'Experience the power of AI-driven conversations. Get instant, accurate responses to your questions with our advanced chatbot technology.',
+  description:
+    "Experience the power of AI-driven conversations. Get instant, accurate responses to your questions with our advanced chatbot technology.",
 
   // ============================================
   // CHATBOT SETTINGS
   // ============================================
 
   /** Name shown in the chat header */
-  chatbotName: 'Trainly Assistant',
+  chatbotName: "Trainly Assistant",
 
   /** First message the chatbot sends */
-  welcomeMessage: 'How can I help you today?',
+  welcomeMessage: "How can I help you today?",
 
   /** Suggested questions shown to users */
-  suggestedQuestions: [
-    'What can you do?',
-    'Tell me more',
-  ],
+  suggestedQuestions: ["What can you do?", "Tell me more"],
 
   /** Placeholder text in the input field */
-  inputPlaceholder: 'Type a message...',
+  inputPlaceholder: "Type a message...",
 
   // ============================================
   // COLORS
@@ -47,36 +45,36 @@ export const branding = {
   // Custom: Any hex color like #ff5733
 
   /** Primary accent color */
-  primaryColor: '#0a31f5',
+  primaryColor: "#f5680a",
 
   /** Chat bubble color for user messages */
-  userMessageColor: '#0a26f5',
+  userMessageColor: "#f5450a",
 
   /** Chat button color */
-  chatButtonColor: 'blue',
+  chatButtonColor: "blue",
 
   // ============================================
   // LINKS & CONTACT
   // ============================================
 
   /** Support email address */
-  supportEmail: '',
+  supportEmail: "",
 
   /** Main website URL */
-  websiteUrl: '',
+  websiteUrl: "",
 
   /** Privacy policy URL */
-  privacyPolicyUrl: '',
+  privacyPolicyUrl: "",
 
   /** Terms of service URL */
-  termsOfServiceUrl: '',
+  termsOfServiceUrl: "",
 
   // ============================================
   // ADMIN SETTINGS
   // ============================================
 
   /** Admin dashboard title */
-  adminTitle: 'Admin Dashboard',
+  adminTitle: "Admin Dashboard",
 
   /** Show "Powered by" footer */
   showPoweredBy: false,
@@ -87,19 +85,22 @@ export const branding = {
 
   features: [
     {
-      title: 'Lightning Fast',
-      description: 'Get instant responses powered by advanced AI models with minimal latency.',
-      icon: 'bolt',
+      title: "Lightning Fast",
+      description:
+        "Get instant responses powered by advanced AI models with minimal latency.",
+      icon: "bolt",
     },
     {
-      title: 'Context Aware',
-      description: 'Understands your questions in context and provides relevant, accurate answers.',
-      icon: 'brain',
+      title: "Context Aware",
+      description:
+        "Understands your questions in context and provides relevant, accurate answers.",
+      icon: "brain",
     },
     {
-      title: 'Easy Integration',
-      description: 'Simple setup with your existing workflow. No complex configurations needed.',
-      icon: 'puzzle',
+      title: "Easy Integration",
+      description:
+        "Simple setup with your existing workflow. No complex configurations needed.",
+      icon: "puzzle",
     },
   ],
 } as const;
